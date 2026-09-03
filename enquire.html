@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Archivo:wdth,wght@125,500&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mtlgbbcp">
-  <link rel="stylesheet" href="css/sections.css?v=mtlgbbcp">
+  <link rel="stylesheet" href="css/style.css?v=mtlgtotq">
+  <link rel="stylesheet" href="css/sections.css?v=mtlgtotq">
 
 </head>
 <body class="contact">
@@ -56,7 +56,8 @@
 
   <div id="page-stage">
     <main>
-      <section class="page-grid" aria-label="Enquire">
+      <section class="enq" aria-label="Enquire">
+        <div class="page-grid enq__nav">
         <nav class="site-nav" aria-label="Primary">
           <header class="logo">
             <a href="index.html" aria-label="Homeland Global Park — home">
@@ -68,76 +69,64 @@
           <a href="enquire.html" class="contact-btn link-underline">Enquire</a>
         </nav>
 
-        <div class="hero-section">
-          <div class="hero-top">
-            <div class="hero-visual-slot">
-              <div class="hero-visual">
-                <img class="hero-opening-media" src="assets/media/render-07-1200.jpg" alt="Living and dining area of a furnished residence" fetchpriority="high" decoding="async">
-              </div>
-            </div>
-            <div class="marquee" aria-hidden="true" data-marquee-speed="70">
-              <div class="marquee-reveal">
-                <div class="marquee-scroll">
-                  <div class="marquee-collection"><span class="marquee-text">Enquire Now</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="hero-bottom">
-            <div class="hero-content">
-              <h1 data-lines>Request a Consultation</h1>
-              <p class="hero-price">Discover the art of elevated living.</p>
-            </div>
-          </div>
         </div>
-        <footer class="site-footer">
-          <span class="scroll-hint" aria-hidden="true"><span class="scroll-hint__line"><span class="scroll-hint__dot"></span></span><span class="scroll-hint__label">Scroll</span></span>
-        </footer>
-      </section>
 
-      <section class="contact-grid">
-        <div class="contact-channels">
-          <h2 class="contact-channels__heading" data-fade>Reach us directly</h2>
-          <div class="contact-channel" data-fade>
-            <span class="contact-channel__label">Phone / WhatsApp</span>
-            <a class="contact-channel__value link-underline" href="https://wa.me/919988976767" target="_blank" rel="noopener">+91 99889 76767</a>
+        <div class="enq__grid">
+          <div class="enq__word" aria-hidden="true" data-fade><span>Enquire</span></div>
+
+          <div class="enq__talk">
+            <h1 class="enq__talk-title" data-lines>Request a consultation.</h1>
+            <p class="enq__talk-sub" data-fade>Discover the art of elevated living. Tell us which residence interests you and we will come back within a working day.</p>
+            <dl class="enq__channels">
+              <div class="enq__channel" data-fade>
+                <dt>Email</dt>
+                <dd><a class="link-underline" href="mailto:enquiry@homelandglobalpark.com">enquiry@homelandglobalpark.com</a></dd>
+              </div>
+              <div class="enq__channel" data-fade>
+                <dt>WhatsApp</dt>
+                <dd><a class="link-underline" href="https://wa.me/919988976767" target="_blank" rel="noopener">Send a message</a></dd>
+              </div>
+              <div class="enq__channel" data-fade>
+                <dt>Phone</dt>
+                <dd><a class="link-underline" href="tel:+919988976767">+91 99889 76767</a></dd>
+              </div>
+              <div class="enq__channel" data-fade>
+                <dt>Address</dt>
+                <dd>Homeland Global Park, Sector-75, Mohali</dd>
+              </div>
+            </dl>
           </div>
-          <div class="contact-channel" data-fade>
-            <span class="contact-channel__label">Email</span>
-            <a class="contact-channel__value link-underline" href="mailto:enquiry@homelandglobalpark.com">enquiry@homelandglobalpark.com</a>
-          </div>
-          <div class="contact-channel" data-fade>
-            <span class="contact-channel__label">Address</span>
-            <span class="contact-channel__value">Homeland Global Park, Sector-75, Mohali</span>
-          </div>
-          <div class="logo-lockup logo-lockup--left" data-fade>
-            <img src="assets/media/logo-hgp.png" alt="Homeland Global Park" loading="lazy" decoding="async">
-            <span class="logo-lockup__divider" aria-hidden="true"></span>
-            <img src="assets/media/logo-hpc.png" alt="Homeland Park Collection" loading="lazy" decoding="async">
-          </div>
-        </div>
-        <form class="contact-form" action="#" method="post" novalidate data-enquiry-form data-mail="enquiry@homelandglobalpark.com">
-          <h2 class="contact-form__title serif" data-fade>Request a Consultation</h2>
-          <div class="field--row" data-fade>
-            <div class="field"><label for="f-name">Full Name</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
-            <div class="field"><label for="f-phone">Phone Number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
-          </div>
-          <div class="field--row" data-fade>
-            <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
-            <div class="field"><label for="f-subject">Subject</label>
-              <select id="f-subject" name="subject">
-                <option>Studio with Kitchenette</option>
-                <option>One Bed Suite</option>
-                <option>One BHK + Deck</option>
-                <option>Investment enquiry</option>
-                <option>General enquiry</option>
-              </select>
+
+          <form class="enq__form" action="#" method="post" novalidate data-enquiry-form data-mail="enquiry@homelandglobalpark.com">
+            <div class="enq__tabs" role="tablist" aria-label="I am enquiring as" data-fade>
+              <button type="button" class="enq__tab is-active" role="tab" aria-selected="true" data-enquiry-tab="resident">Living here</button>
+              <button type="button" class="enq__tab" role="tab" aria-selected="false" data-enquiry-tab="investor">Investing</button>
             </div>
-          </div>
-          <div class="field" data-fade><label for="f-message">Message</label><textarea id="f-message" name="message" rows="4"></textarea></div>
-          <button type="submit" class="form-submit" data-fade>Submit Enquiry <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-          <p class="form-note" data-fade data-form-note>Submitting opens your email app with the enquiry pre-filled. You can also reach us on WhatsApp or by phone.</p>
-        </form>
+            <p class="enq__hint" data-fade data-enquiry-hint data-hint-resident="For a home of your own: pick the residence you have in mind and we will arrange a viewing." data-hint-investor="For a fully managed asset with assured rental returns: tell us your budget and timeline in the message.">For a home of your own: pick the residence you have in mind and we will arrange a viewing.</p>
+            <div class="field" data-fade><label for="f-name">Full name*</label><input id="f-name" name="name" type="text" autocomplete="name" required></div>
+            <div class="field" data-fade><label for="f-email">Email*</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+            <div class="field--row" data-fade>
+              <div class="field"><label for="f-phone">Phone*</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" required></div>
+              <div class="field"><label for="f-subject">Subject</label>
+                <select id="f-subject" name="subject">
+                  <optgroup label="Residences">
+                    <option>Studio with Kitchenette</option>
+                    <option>One Bed Suite</option>
+                    <option>One BHK + Deck</option>
+                  </optgroup>
+                  <optgroup label="Other">
+                    <option>Assured rental / investment</option>
+                    <option>General enquiry</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="field" data-fade><label for="f-message">Message</label><textarea id="f-message" name="message" rows="3"></textarea></div>
+            <label class="form-consent" data-fade><input type="checkbox" name="consent" required> I agree to be contacted about my enquiry and accept the Privacy Policy.</label>
+            <button type="submit" class="form-submit" data-fade>Submit Enquiry</button>
+            <p class="form-note" data-fade data-form-note>Submitting opens your email app with the enquiry pre-filled. You can also reach us on WhatsApp or by phone.</p>
+          </form>
+        </div>
       </section>
 
       <footer class="site-foot" id="footer">
@@ -225,8 +214,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/CustomEase.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
-  <script src="js/app.js?v=mtlgbbcp"></script>
-  <script src="js/sections.js?v=mtlgbbcp"></script>
+  <script src="js/app.js?v=mtlgtotq"></script>
+  <script src="js/sections.js?v=mtlgtotq"></script>
 
 </body>
 </html>

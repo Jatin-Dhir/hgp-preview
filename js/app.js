@@ -658,6 +658,17 @@
     const form = $('[data-enquiry-form]');
     if (!form) return;
     const note = $('[data-form-note]', form);
+    // Living here / Investing tabs: swap the hint and the default subject
+    const tabs = $$('[data-enquiry-tab]', form);
+    const hint = $('[data-enquiry-hint]', form);
+    tabs.forEach((tab) => tab.addEventListener('click', () => {
+      const type = tab.getAttribute('data-enquiry-tab');
+      tabs.forEach((t) => { const on = t === tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on ? 'true' : 'false'); });
+      form.dataset.type = type;
+      if (hint) hint.textContent = hint.getAttribute(`data-hint-${type}`) || '';
+      const sel = form.querySelector('[name="subject"]');
+      if (sel && type === 'investor') sel.value = 'Assured rental / investment';
+    }));
     // "?subject=One Bed Suite" from a residence page preselects the subject
     const wanted = new URLSearchParams(location.search).get('subject');
     const select = form.querySelector('[name="subject"]');
@@ -676,8 +687,9 @@
         const first = form.querySelector(`[name="${missing[0]}"]`); first && first.focus();
         return;
       }
-      const subject = `Enquiry: ${data.get('subject') || 'Homeland Global Park'}`;
-      const body = [`Name: ${data.get('name')}`, `Phone: ${data.get('phone')}`, `Email: ${data.get('email')}`, `Subject: ${data.get('subject') || ''}`, '', String(data.get('message') || '')].join('\n');
+      const type = form.dataset.type === 'investor' ? 'Investing' : 'Living here';
+      const subject = `Enquiry (${type}): ${data.get('subject') || 'Homeland Global Park'}`;
+      const body = [`Name: ${data.get('name')}`, `Phone: ${data.get('phone')}`, `Email: ${data.get('email')}`, `Enquiring as: ${type}`, `Subject: ${data.get('subject') || ''}`, '', String(data.get('message') || '')].join('\n');
       window.location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       if (note) note.textContent = 'Your email app should now open with the enquiry pre-filled. If it did not, write to ' + form.dataset.mail + '.';
     });
