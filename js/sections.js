@@ -55,7 +55,9 @@
     const spacer = $('.hero-spacer');
     if (!stage || !sticky || !slot || !visual || !spacer) return;
 
-    const grow = () => (1.1 * vh() + 0.052 * vw()) * 2;
+    // phones grow over about one screen of swiping (tablets 1.5, desktop 2) so the story starts sooner
+    const mult = () => (vw() <= 650 ? 1.15 : vw() <= 1024 ? 1.5 : 2);
+    const grow = () => (1.1 * vh() + 0.052 * vw()) * mult();
     const hold = () => 0.05 * vh();
     const setSpacer = () => { spacer.style.height = `${Math.round(grow() + hold())}px`; };
     setSpacer();
@@ -71,7 +73,18 @@
     const shade = $('.hero-visual__shade', visual);
     const fading = ['.hero-section .marquee', '.hero-content', '.scroll-hint'].map((s) => $(s)).filter(Boolean);
 
-    gsap.timeline({
+    // GPU path: the photo is laid out once at its final full-bleed size (100vw x 110svh) and only *transformed*
+    // while the box grows, so the browser never re-rasterises the large image on every scroll frame
+    const media = $('.hero-opening-media', visual);
+    const baseScale = () => { const s = slotRel(); return Math.max(s.h / (1.1 * vh()), s.w / vw()); };
+    if (media) {
+      stage.classList.add('hero-stage--gpu');
+      const prime = () => { const k = baseScale(); media.dataset.baseScale = String(k); return k; };
+      gsap.set(media, { x: 0, y: 0, xPercent: -50, yPercent: -50, scale: prime() });
+      ScrollTrigger.addEventListener('refreshInit', prime);
+    }
+
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: stage,
         start: 'top top',
@@ -87,6 +100,7 @@
         0)
       .to(fading, { autoAlpha: 0, duration: 0.3, ease: 'none' }, 0)
       .to(shade, { opacity: 1, duration: 0.5, ease: 'none' }, 0.25);
+    if (media) tl.fromTo(media, { scale: () => baseScale() }, { scale: 1, ease: 'none', immediateRender: false }, 0);
 
     // colour theme flips once the white sections arrive
     const gallery = $('.cat-gallery') || $('.home-collections') || $('.xp-services') || $('.about-intro');
@@ -363,13 +377,13 @@
   function boot() {
     initAnchors();
     initHeroGrow();
-    initReveals();
     initParallax();
     $$('[data-slider]').forEach(initSlider);
     $$('[data-strip]').forEach(initStrip);
     initSelectionFreeze();
     ScrollTrigger.refresh();
-    A.fontsReady.then(() => ScrollTrigger.refresh());
+    // split text only once the web fonts are in, so the line breaks match the final typesetting (fontsReady is capped at 1.5 s)
+    A.fontsReady.then(() => { initReveals(); ScrollTrigger.refresh(); });
     window.addEventListener('load', () => ScrollTrigger.refresh());
     document.addEventListener('altura:introdone', () => ScrollTrigger.refresh(), { once: true });
   }

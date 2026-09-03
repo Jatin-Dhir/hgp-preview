@@ -190,9 +190,11 @@
 
     // prime hidden states before revealing the layer
     if (h1) hideLines(h1);
+    // on the residence pages sections.js lays the photo out full-bleed and parks it at a base scale (see initHeroGrow)
+    const base = parseFloat((img && img.dataset && img.dataset.baseScale) || '1') || 1;
     if (withVisual && visual) {
       gsap.set(visual, { clipPath: 'inset(50% 50% 50% 50%)', visibility: 'visible' });
-      gsap.set(img, { scale: 1.5 });
+      gsap.set(img, { scale: 1.5 * base });
     } else if (visual) {
       gsap.set(visual, { visibility: 'visible' });
     }
@@ -206,7 +208,7 @@
 
     if (withVisual && visual) {
       tl.to(visual, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'power4.out' }, 0.2)
-        .to(img, { scale: 1, duration: 1.5, ease: 'power4.out' }, 0.2);
+        .to(img, { scale: base, duration: 1.5, ease: 'power4.out' }, 0.2);
     }
     if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.35);
     tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.45);
@@ -746,6 +748,28 @@
   }
 
   /* =========================================================
+     Touch: swipe left/right inside the lightbox to step through the photos
+     ========================================================= */
+  function initTouchSwipes() {
+    const lb = $('#lightbox');
+    if (!lb) return;
+    let x0 = null;
+    let swiped = false;
+    lb.addEventListener('pointerdown', (e) => { x0 = e.pointerType === 'mouse' ? null : e.clientX; }, { passive: true });
+    lb.addEventListener('pointerup', (e) => {
+      if (x0 === null) return;
+      const dx = e.clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) < 40) return;
+      const btn = $(dx < 0 ? '[data-lightbox-next]' : '[data-lightbox-prev]', lb);
+      if (btn) btn.click(); // synthetic click first, then flag the real one that follows the touch
+      swiped = true;
+    }, { passive: true });
+    // the click that follows a swipe must not close the lightbox
+    lb.addEventListener('click', (e) => { if (swiped) { swiped = false; e.stopPropagation(); e.preventDefault(); } }, true);
+  }
+
+  /* =========================================================
      Soft page transitions for internal links
      ========================================================= */
   function initTransitions() {
@@ -789,6 +813,7 @@
     initHomeScrollReveal();
     initCursor();
     initLightbox();
+    initTouchSwipes();
     initEnquiryForm();
     initTransitions();
     await fontsReady;
