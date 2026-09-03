@@ -73,7 +73,7 @@
       wait(timeout),
     ]);
   }
-  const heroMedia = () => $('.hero-visual > img') || $('.hero-visual > video');
+  const heroMedia = () => $('.hero-visual img') || $('.hero-visual video');
 
   /* =========================================================
      Split text into lines (own implementation, no plugin)
@@ -349,16 +349,17 @@
     gsap.set(box, { position: 'fixed', left: from.left, top: from.top, width: from.width, height: from.height, margin: 0, zIndex: 3 });
 
     const exit = gsap.timeline();
-    exit.to(wrapper, { yPercent: -110, duration: 0.5, ease: 'power3.in' }, 0);
-    exit.to($$('.site-preloader__caption', pre), { autoAlpha: 0, y: -6, duration: 0.4, ease: 'power2.in' }, 0);
+    exit.to(wrapper, { yPercent: -110, duration: 0.5, ease: 'power2.inOut' }, 0);
+    exit.to($$('.site-preloader__caption', pre), { autoAlpha: 0, y: -6, duration: 0.35, ease: 'power2.out' }, 0);
     // the white loader logo hands over to the page logo in the same spot as the wipe passes
     exit.to($('.site-preloader__logo', pre), { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }, 0.55);
     exit.to(bg, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.0, ease: EASE_WIPE }, 0.2);
+    // travel by transform only (both rects are squares): compositor-driven, no layout during the hand-off
     exit.to(box, {
-      left: to.left,
-      top: to.top,
-      width: to.width,
-      height: to.height,
+      x: to.left - from.left,
+      y: to.top - from.top,
+      scale: to.width / from.width,
+      transformOrigin: '0 0',
       duration: 0.9,
       ease: 'power2.inOut',
       overwrite: 'auto',
@@ -405,9 +406,35 @@
 
     const emit = (phase) => document.dispatchEvent(new CustomEvent('altura:selection', { detail: { phase } }));
 
+    // the vertical titles must never run past the panel: measure the longest one and size all of them together
+    const fitTitles = () => {
+      const titles = cards.map((c) => $('.selection-card__title', c)).filter(Boolean);
+      titles.forEach((t) => { t.style.fontSize = ''; });
+      let ratio = 1;
+      cards.forEach((card) => {
+        const panel = $('.selection-card__panel', card);
+        const title = $('.selection-card__title', card);
+        if (!panel || !title) return;
+        const cs = getComputedStyle(panel);
+        const vertical = getComputedStyle(title).writingMode.startsWith('vertical');
+        const avail = (vertical ? panel.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) : panel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)) - 2;
+        const rect = title.getBoundingClientRect();
+        const need = vertical ? rect.height : rect.width;
+        if (need > avail && need > 0) ratio = Math.min(ratio, avail / need);
+      });
+      if (ratio < 1) {
+        const base = parseFloat(getComputedStyle(titles[0]).fontSize);
+        titles.forEach((t) => { t.style.fontSize = `${Math.floor(base * ratio * 100) / 100}px`; });
+      }
+    };
+    fitTitles();
+    let fitTimer;
+    window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitTitles, 150); });
+
     const openMenu = () => {
       if (busy || open) return;
       busy = true; open = true;
+      fitTitles();
       emit('open-start');
       document.body.classList.add('selection-open');
       menu.setAttribute('aria-hidden', 'false');
@@ -419,9 +446,9 @@
         return;
       }
       gsap.timeline({ onComplete: () => { busy = false; cards[0] && cards[0].focus(); } })
-        .to(stage, { scale: pageScale(), yPercent: 50, duration: 1.15, ease: 'expo.inOut' }, 0)
+        .to(stage, { scale: pageScale(), yPercent: 50, duration: 1.0, ease: 'expo.inOut' }, 0)
         .to(actions, { autoAlpha: 0, duration: 0.3 }, 0)
-        .fromTo(cards, { yPercent: -125 }, { yPercent: 0, duration: 1.15, ease: 'expo.out', stagger: 0.07 }, 0.3);
+        .fromTo(cards, { yPercent: -125 }, { yPercent: 0, duration: 1.0, ease: 'expo.out', stagger: 0.07 }, 0.25);
     };
 
     const closeMenu = () => {
@@ -438,9 +465,9 @@
       };
       if (!hasGsap || reduceMotion) { done(); return; }
       gsap.timeline({ onComplete: done })
-        .to(cards, { yPercent: -125, duration: 0.8, ease: 'expo.in', stagger: { each: 0.05, from: 'end' } }, 0)
-        .to(stage, { scale: 1, yPercent: 0, duration: 1.0, ease: 'expo.inOut' }, 0.15)
-        .to(actions, { autoAlpha: 1, duration: 0.4 }, 0.8);
+        .to(cards, { yPercent: -125, duration: 0.7, ease: 'power3.inOut', stagger: { each: 0.05, from: 'end' } }, 0)
+        .to(stage, { scale: 1, yPercent: 0, duration: 0.9, ease: 'expo.inOut' }, 0.12)
+        .to(actions, { autoAlpha: 1, duration: 0.35 }, 0.7);
     };
 
     triggers.forEach((t) => t.addEventListener('click', (e) => {
@@ -469,8 +496,8 @@
         gsap.timeline({
           onComplete: () => navigateWithMorph(href, { visual: $('.selection-card__cover', card), bg: $('.selection-card__panel', card) }),
         })
-          .to(others, { autoAlpha: 0, yPercent: -12, duration: 0.45, ease: 'power2.in', stagger: 0.05 }, 0)
-          .to(stage, { autoAlpha: 0, duration: 0.4, ease: 'power2.in' }, 0)
+          .to(others, { autoAlpha: 0, yPercent: -12, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 0)
+          .to(stage, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
           .to(card, { scale: 1.03, duration: 0.6, ease: 'power2.inOut' }, 0);
       });
     });
@@ -504,9 +531,9 @@
         return;
       }
       gsap.timeline({ onComplete: () => { busy = false; items[0] && items[0].focus(); } })
-        .to(overlay, { opacity: 1, duration: 0.5 }, 0)
-        .fromTo(panel, { clipPath: 'inset(100% 0% 0% 100%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'expo.inOut' }, 0)
-        .fromTo(items, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.06, ease: 'power3.out' }, 0.35);
+        .to(overlay, { opacity: 1, duration: 0.4 }, 0)
+        .fromTo(panel, { clipPath: 'inset(100% 0% 0% 100%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'expo.inOut' }, 0)
+        .fromTo(items, { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.05, ease: 'power3.out' }, 0.22);
     };
 
     const hide = () => {
@@ -526,9 +553,9 @@
         return;
       }
       gsap.timeline({ onComplete: done })
-        .to(items, { y: 14, autoAlpha: 0, duration: 0.35, stagger: { each: 0.03, from: 'end' }, ease: 'power2.in' }, 0)
-        .to(panel, { clipPath: 'inset(100% 0% 0% 100%)', duration: 0.75, ease: 'expo.inOut' }, 0.1)
-        .to(overlay, { opacity: 0, duration: 0.45 }, 0.3);
+        .to(items, { y: 10, autoAlpha: 0, duration: 0.25, stagger: { each: 0.02, from: 'end' }, ease: 'power2.out' }, 0)
+        .to(panel, { clipPath: 'inset(100% 0% 0% 100%)', duration: 0.5, ease: 'expo.inOut' }, 0.05)
+        .to(overlay, { opacity: 0, duration: 0.35 }, 0.15);
     };
 
     openBtn.addEventListener('click', () => (open ? hide() : show()));
@@ -648,7 +675,7 @@
       if (!open) return;
       open = false;
       const done = () => { box.setAttribute('aria-hidden', 'true'); document.body.classList.remove('lightbox-open'); img.src = ''; lastFocus && lastFocus.focus(); };
-      if (hasGsap && !reduceMotion) gsap.to(box, { autoAlpha: 0, duration: 0.3, ease: 'power2.in', onComplete: done });
+      if (hasGsap && !reduceMotion) gsap.to(box, { autoAlpha: 0, duration: 0.25, ease: 'power2.out', onComplete: done });
       else { box.style.visibility = 'hidden'; done(); }
     };
 
@@ -748,6 +775,54 @@
   }
 
   /* =========================================================
+     Warm-up: once the entrance has played, quietly fetch this page's photos and the pages one click away,
+     so scrolling and the next navigation never meet an unloaded image
+     ========================================================= */
+  const prefetched = new Set();
+  function prefetchPage(href) {
+    if (!href || prefetched.has(href)) return;
+    prefetched.add(href);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.as = 'document';
+    link.href = href;
+    document.head.appendChild(link);
+  }
+  function initWarmUp() {
+    const conn = navigator.connection;
+    if (conn && (conn.saveData || /(^|[^3-9])2g/.test(conn.effectiveType || ''))) return; // respect data saver / slow links
+    const run = () => {
+      // this page's lazy photos, in document order, a few at a time at low priority
+      const lazy = $$('img[loading="lazy"]');
+      let i = 0;
+      const step = () => {
+        lazy.slice(i, i + 6).forEach((img) => { img.fetchPriority = 'low'; img.loading = 'eager'; });
+        i += 6;
+        if (i < lazy.length) setTimeout(step, 600);
+      };
+      step();
+      // the pages one click away, and their full-size heroes on wide screens
+      $$('.selection-card[href], .cat-next a[href], .hero-price--link[href]').forEach((a) => {
+        const href = a.getAttribute('href');
+        if (href && /\.html/.test(href) && !/^https?:/i.test(href)) prefetchPage(href.split('#')[0]);
+      });
+      if (window.innerWidth > 650) {
+        $$('.selection-card__cover img, .cat-next__parallax img').forEach((img) => {
+          const src = img.getAttribute('src') || '';
+          if (!/-1200\./.test(src)) return;
+          const big = new Image();
+          big.fetchPriority = 'low';
+          big.src = src.replace('-1200.', '-2000.');
+        });
+      }
+    };
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 300));
+    document.addEventListener('altura:introdone', () => idle(run, { timeout: 1500 }), { once: true });
+    window.ALTURA = window.ALTURA || {};
+    window.ALTURA.warmUp = run;
+  }
+
+  /* =========================================================
      Touch: swipe left/right inside the lightbox to step through the photos
      ========================================================= */
   function initTouchSwipes() {
@@ -789,12 +864,12 @@
       if (next) {
         // the teaser photo hands over to the next page's hero; everything else fades first
         gsap.timeline({ onComplete: () => navigateWithMorph(href, { visual: $('.cat-next__viewport', next), bg: next }) })
-          .to($$('#page-stage main > *:not(.cat-next)'), { autoAlpha: 0, duration: 0.4, ease: 'power2.in' }, 0)
+          .to($$('#page-stage main > *:not(.cat-next)'), { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
           .to('.site-actions', { autoAlpha: 0, duration: 0.3 }, 0)
-          .to($('.cat-next__body', next), { autoAlpha: 0, y: -16, duration: 0.35, ease: 'power2.in' }, 0);
+          .to($('.cat-next__body', next), { autoAlpha: 0, y: -16, duration: 0.3, ease: 'power2.out' }, 0);
         return;
       }
-      gsap.to('#page-stage, .site-actions', { autoAlpha: 0, duration: 0.45, ease: 'power2.in', onComplete: () => navigateWithMorph(href) });
+      gsap.to('#page-stage, .site-actions', { autoAlpha: 0, duration: 0.35, ease: 'power2.out', onComplete: () => navigateWithMorph(href) });
     });
     window.addEventListener('pageshow', (e) => {
       if (e.persisted) {
@@ -816,7 +891,11 @@
     initTouchSwipes();
     initEnquiryForm();
     initTransitions();
+    initWarmUp();
     await fontsReady;
+    // with cached fonts the await above resolves inside the DOMContentLoaded task; yield once so sections.js
+    // (hero grow base scale, Lenis) has run before the intro starts
+    await new Promise((resolve) => setTimeout(resolve, 0));
     initMarquees();
 
     const viaMorph = !!window.__vt;

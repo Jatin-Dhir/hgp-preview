@@ -82,6 +82,8 @@
       const prime = () => { const k = baseScale(); media.dataset.baseScale = String(k); return k; };
       gsap.set(media, { x: 0, y: 0, xPercent: -50, yPercent: -50, scale: prime() });
       ScrollTrigger.addEventListener('refreshInit', prime);
+      // the blurred placeholder moves to the box so the photo stays a clean, directly-composited image (sharp while scaling)
+      if (media.style.background) { visual.style.background = media.style.background; media.style.background = ''; }
     }
 
     const tl = gsap.timeline({
@@ -89,18 +91,35 @@
         trigger: stage,
         start: 'top top',
         end: () => `+=${grow()}`,
-        scrub: true,
+        scrub: 0.5, // a short catch-up smooths wheel steps and touch momentum alike
         invalidateOnRefresh: true,
-        onUpdate: (self) => body.classList.toggle('hero-grown', self.progress > 0.42),
+        onUpdate: (self) => {
+          body.classList.toggle('hero-grown', self.progress > 0.42);
+          // scrolled before the entrance finished: hand the photo to the scroll story at once instead of fighting it
+          if (self.progress > 0.002 && !window.__introDone) {
+            if (media) gsap.killTweensOf(media, 'scale');
+            gsap.killTweensOf(visual, 'clipPath');
+            gsap.set(visual, { clipPath: 'inset(0% 0% 0% 0%)' });
+          }
+        },
       },
     })
+      // the box keeps its slot-sized layout and is only translated/scaled: no layout or paint per scroll frame
       .fromTo(visual,
-        { left: 0, top: 0, width: () => slotRel().w, height: () => slotRel().h },
-        { left: () => -slotRel().left, top: () => -(0.05 * vh()) - slotRel().top, width: () => vw(), height: () => 1.1 * vh(), ease: 'none', immediateRender: false },
+        { x: 0, y: 0, scaleX: 1, scaleY: 1, transformOrigin: '0 0' },
+        { x: () => -slotRel().left, y: () => -(0.05 * vh()) - slotRel().top, scaleX: () => vw() / slotRel().w, scaleY: () => (1.1 * vh()) / slotRel().h, ease: 'none', immediateRender: false },
         0)
       .to(fading, { autoAlpha: 0, duration: 0.3, ease: 'none' }, 0)
       .to(shade, { opacity: 1, duration: 0.5, ease: 'none' }, 0.25);
-    if (media) tl.fromTo(media, { scale: () => baseScale() }, { scale: 1, ease: 'none', immediateRender: false }, 0);
+    if (media) {
+      // the photo counter-scales per axis, so it never distorts and simply zooms from its base scale to 1
+      const sync = () => {
+        const b = baseScale();
+        const k = b + (1 - b) * tl.progress();
+        gsap.set(media, { scaleX: k / gsap.getProperty(visual, 'scaleX'), scaleY: k / gsap.getProperty(visual, 'scaleY') });
+      };
+      tl.eventCallback('onUpdate', sync);
+    }
 
     // colour theme flips once the white sections arrive
     const gallery = $('.cat-gallery') || $('.home-collections') || $('.xp-services') || $('.about-intro');

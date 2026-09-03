@@ -58,10 +58,11 @@ body.category main { overflow: visible; background: var(--cat); }
   position: absolute;
   left: 0; top: 0;
   width: 100%; height: 100%;
-  will-change: width, height, left, top;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 /* GPU path (class added by sections.js): the photo keeps its final full-bleed size and is only transformed while the box grows */
-.hero-stage--gpu .hero-visual > .hero-opening-media {
+.hero-stage--gpu .hero-visual .hero-opening-media {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -967,7 +968,7 @@ body.contact #page-stage, body.contact main { background: var(--paper); }
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  transition: background-position 0.75s var(--ease), color 0.75s var(--ease);
+  transition: background-position 0.5s var(--ease), color 0.5s var(--ease);
 }
 .contact-form__submit:hover,
 .contact-form__submit:focus-visible { background-position: 0 0; color: var(--accent); }
@@ -1206,7 +1207,7 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
   .xp-hero__body { grid-column: 1 / -1; padding-top: 12vw; }
   .xp-hero__title { max-width: 92vw; font-size: 12vw; }
   .xp-hero__lead { max-width: 88vw; font-size: 4.6vw; }
-  .xp-hero__figure { aspect-ratio: 4 / 3; }
+  .xp-hero__figure { aspect-ratio: 4 / 5; } /* portrait crop on phones */
   .xp-section-head h2 { max-width: 92vw; font-size: 10vw; }
   .xp-index__row { grid-template-columns: 1fr; gap: 4vw; }
   .xp-index__media { aspect-ratio: 16 / 10; }
@@ -1284,6 +1285,7 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
   .cat-pull-quote__text, .cat-pull-quote__attrib { grid-column: 1 / -1; }
   .cat-pull-quote__text { font-size: 7.5vw; }
   .cat-next { height: 60svh; }
+  .cat-parallax { height: 100svh; } /* phones get a portrait crop (see <picture> sources), shown nearly full-screen */
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .tile:nth-child(even) { margin-top: 0; }
   .logo-lockup img { height: 10vw; }
