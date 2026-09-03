@@ -625,8 +625,9 @@ body.preloader-done .site-preloader { display: none; }
 }
 .site-preloader__frames {
   position: relative;
-  width: var(--visual);
-  height: var(--visual);
+  /* 20% larger than the hero square so the loader reads clearly; the exit shrinks it into the slot */
+  width: calc(var(--visual) * 1.2);
+  height: calc(var(--visual) * 1.2);
   overflow: hidden;
   will-change: transform;
 }
