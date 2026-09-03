@@ -625,9 +625,9 @@ body.preloader-done .site-preloader { display: none; }
 }
 .site-preloader__frames {
   position: relative;
-  /* 20% larger than the hero square so the loader reads clearly; the exit shrinks it into the slot */
-  width: calc(var(--visual) * 1.2);
-  height: calc(var(--visual) * 1.2);
+  /* 50% larger than the hero square so the loader reads clearly; the exit shrinks it back into the slot */
+  width: calc(var(--visual) * 1.5);
+  height: calc(var(--visual) * 1.5);
   overflow: hidden;
   will-change: transform;
 }
