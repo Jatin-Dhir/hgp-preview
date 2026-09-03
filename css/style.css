@@ -616,21 +616,38 @@ body.preloader-done .site-preloader { display: none; }
   overflow: hidden;
   will-change: clip-path;
 }
-/* tone-on-tone monogram: the brand mark repeated like a monogram canvas, drifting very slowly */
-.site-preloader__bg::after {
-  content: "";
+/* brand on the loader: the white logo sits exactly where the page logo will land, captions frame the counter */
+.site-preloader__logo {
   position: absolute;
-  inset: -320px 0 0 -240px;
-  background: url("../assets/media/monogram-tile.png") 0 0 / 240px 320px repeat;
-  opacity: 0.085;
-  animation: monogram-drift 48s linear infinite;
-  pointer-events: none;
+  top: calc(var(--grid-pad) * 0.6);
+  left: 50%;
+  transform: translateX(-50%);
+  height: var(--logo-h);
+  width: auto;
+  z-index: 4;
+  opacity: 0;
 }
-@keyframes monogram-drift {
-  from { transform: translate(0, 0); }
-  to { transform: translate(240px, 320px); }
+.site-preloader__caption {
+  position: absolute;
+  bottom: max(6.5vh, 2.5rem);
+  z-index: 4;
+  font-family: var(--font-wide);
+  font-stretch: 125%;
+  font-weight: 500;
+  font-size: calc(var(--small) * 0.62);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+  opacity: 0;
 }
-@media (prefers-reduced-motion: reduce) { .site-preloader__bg::after { animation: none; } }
+.site-preloader__caption--left { left: var(--grid-pad); }
+.site-preloader__caption--right { right: var(--grid-pad); }
+@media (max-width: 650px) and (orientation: portrait) {
+  .site-preloader__caption--right { display: none; }
+  .site-preloader__caption--left { left: 50%; transform: translateX(-50%); bottom: calc(max(6.5vh, 2.5rem) + 2.6em); font-size: 2.4vw; }
+}
 .site-preloader__stage {
   position: relative;
   z-index: 2;

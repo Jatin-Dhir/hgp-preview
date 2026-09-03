@@ -281,6 +281,8 @@
     // initial state
     gsap.set(frames, { scale: 0.06, autoAlpha: 0, transformOrigin: 'center center' });
     gsap.set(imgs, { scale: 1 });
+    const brand = $$('.site-preloader__logo, .site-preloader__caption', pre);
+    gsap.fromTo(brand, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: 0.15 });
     tick(0, false);
     gsap.set(wrapper, { yPercent: 100 });
     gsap.to(wrapper, { yPercent: 0, duration: 0.85, ease: 'power4.out', delay: 0.1 });
@@ -306,6 +308,9 @@
 
     const exit = gsap.timeline();
     exit.to(wrapper, { yPercent: -110, duration: 0.5, ease: 'power3.in' }, 0);
+    exit.to($$('.site-preloader__caption', pre), { autoAlpha: 0, y: -6, duration: 0.4, ease: 'power2.in' }, 0);
+    // the white loader logo hands over to the page logo in the same spot as the wipe passes
+    exit.to($('.site-preloader__logo', pre), { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }, 0.55);
     exit.to(bg, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.0, ease: EASE_WIPE }, 0.2);
     exit.to(box, {
       left: to.left,
