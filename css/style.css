@@ -613,8 +613,24 @@ body.preloader-done .site-preloader { display: none; }
   inset: 0;
   background: var(--navy);
   z-index: 1;
+  overflow: hidden;
   will-change: clip-path;
 }
+/* tone-on-tone monogram: the brand mark repeated like a monogram canvas, drifting very slowly */
+.site-preloader__bg::after {
+  content: "";
+  position: absolute;
+  inset: -320px 0 0 -240px;
+  background: url("../assets/media/monogram-tile.png") 0 0 / 240px 320px repeat;
+  opacity: 0.085;
+  animation: monogram-drift 48s linear infinite;
+  pointer-events: none;
+}
+@keyframes monogram-drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(240px, 320px); }
+}
+@media (prefers-reduced-motion: reduce) { .site-preloader__bg::after { animation: none; } }
 .site-preloader__stage {
   position: relative;
   z-index: 2;
