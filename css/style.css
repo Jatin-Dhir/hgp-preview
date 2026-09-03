@@ -626,6 +626,7 @@ body.preloader-done .site-preloader { display: none; }
   width: auto;
   z-index: 4;
   opacity: 0;
+  visibility: hidden;
 }
 .site-preloader__caption {
   position: absolute;

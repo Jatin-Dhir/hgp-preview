@@ -282,6 +282,13 @@
     gsap.set(frames, { scale: 0.06, autoAlpha: 0, transformOrigin: 'center center' });
     gsap.set(imgs, { scale: 1 });
     const brand = $$('.site-preloader__logo, .site-preloader__caption', pre);
+    // put the loader logo exactly where the page logo will appear, so the brand does not move during the hand-off
+    const loaderLogo = $('.site-preloader__logo', pre);
+    const pageLogo = $('.logo__img--dark');
+    if (loaderLogo && pageLogo) {
+      const lr = pageLogo.getBoundingClientRect();
+      if (lr.height) gsap.set(loaderLogo, { top: lr.top, left: lr.left, height: lr.height, x: 0, xPercent: 0, transform: 'none' });
+    }
     gsap.fromTo(brand, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: 0.15 });
     tick(0, false);
     gsap.set(wrapper, { yPercent: 100 });
