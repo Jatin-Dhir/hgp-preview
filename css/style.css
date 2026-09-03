@@ -1114,4 +1114,3 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
 .lightbox__close svg { width: 45%; height: 45%; }
 .lightbox__close:hover { background: #fff; color: var(--navy); }
 body.lightbox-open { overflow: hidden; }
-.field .is-invalid, .field input.is-invalid, .field select.is-invalid { border-bottom-color: #b3261e; }

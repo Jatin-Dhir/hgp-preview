@@ -89,7 +89,7 @@
       .to(shade, { opacity: 1, duration: 0.5, ease: 'none' }, 0.25);
 
     // colour theme flips once the white sections arrive
-    const gallery = $('.cat-gallery') || $('.home-collections') || $('.xp-services') || $('.about-intro') || $('.contact-grid');
+    const gallery = $('.cat-gallery') || $('.home-collections') || $('.xp-services') || $('.about-intro');
     if (gallery) {
       ScrollTrigger.create({
         trigger: gallery,

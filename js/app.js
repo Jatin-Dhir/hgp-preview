@@ -152,9 +152,9 @@
     const base = $('.marquee-collection', el);
     if (!scroll || !base) return;
     $$('.marquee-collection', scroll).slice(1).forEach((c) => c.remove());
-    const w = base.getBoundingClientRect().width;
+    const w = base.offsetWidth; // layout width: unaffected by the rotated wrapper on the Enquire page
     if (!w) return;
-    const copies = Math.ceil((window.innerWidth * 2) / w) + 1;
+    const copies = Math.ceil((Math.max(window.innerWidth, window.innerHeight) * 2) / w) + 1;
     for (let i = 0; i < copies; i++) scroll.appendChild(base.cloneNode(true));
     el._marqueeWidth = w;
     if (!hasGsap || reduceMotion) return;
@@ -225,10 +225,43 @@
     return tl;
   }
 
+  /* Enquire page: rotated marquee slides in, then heading, channels, tabs and form rows follow */
+  function contactIntro({ delay = 0 } = {}) {
+    const tl = gsap.timeline({ paused: true, delay });
+    const marquee = $('.marquee-reveal');
+    const chrome = ['.logo', '.about-btn', '.contact-btn'].map((s) => $(s)).filter(Boolean);
+    const heading = $('.contact-hero__heading');
+    const channels = $$('.contact-hero__channel');
+    const tabs = $('.contact-form-tabs');
+    const rows = $$('.contact-page-form > div');
+    const actions = $('.site-actions');
+
+    if (heading) hideLines(heading);
+    if (marquee) gsap.set(marquee, { yPercent: 28, autoAlpha: 0 });
+    gsap.set(chrome, { y: -10, autoAlpha: 0 });
+    gsap.set(channels, { y: 14, autoAlpha: 0 });
+    if (tabs) gsap.set(tabs, { y: 10, autoAlpha: 0 });
+    gsap.set(rows, { y: 12, autoAlpha: 0 });
+    if (actions) gsap.set(actions, { yPercent: 60, autoAlpha: 0 });
+
+    document.body.classList.add('is-ready');
+
+    if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.2);
+    tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.35);
+    if (heading) tl.add(revealLines(heading), 0.55);
+    tl.to(channels, { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: 'power3.out' }, 0.75);
+    if (tabs) tl.to(tabs, { y: 0, autoAlpha: 1, duration: 0.7, ease: 'power3.out' }, 0.6);
+    tl.to(rows, { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.06, ease: 'power3.out' }, 0.7);
+    if (actions) tl.to(actions, { yPercent: 0, autoAlpha: 1, duration: 0.6, ease: 'power2.out' }, 1.0);
+    tl.call(() => { window.__introDone = true; document.dispatchEvent(new CustomEvent('altura:introdone')); }, null, '>-0.2');
+    tl.play();
+    return tl;
+  }
+
   function showEverythingInstantly() {
     document.body.classList.add('is-ready', 'preloader-done');
     document.documentElement.classList.remove('preloading');
-    $$('.hero-visual, .marquee-reveal, .logo, .about-btn, .contact-btn, .hero-content, [data-copyright], .scroll-hint, .site-actions').forEach((el) => {
+    $$('.hero-visual, .marquee-reveal, .logo, .about-btn, .contact-btn, .hero-content, [data-copyright], .scroll-hint, .site-actions, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div').forEach((el) => {
       el.style.visibility = 'visible';
       el.style.opacity = '';
       el.style.clipPath = 'none';
@@ -658,20 +691,34 @@
     const form = $('[data-enquiry-form]');
     if (!form) return;
     const note = $('[data-form-note]', form);
-    // Living here / Investing tabs: swap the hint and the default subject
-    const tabs = $$('[data-enquiry-tab]', form);
-    const hint = $('[data-enquiry-hint]', form);
+    const noteDefault = note ? note.textContent : '';
+    // Living here / Investing tabs (they sit outside the form): swap the message prompt and the default subject
+    const tabs = $$('[data-enquiry-tab]');
+    const message = form.querySelector('[name="message"]');
+    const select = form.querySelector('[name="subject"]');
     tabs.forEach((tab) => tab.addEventListener('click', () => {
       const type = tab.getAttribute('data-enquiry-tab');
-      tabs.forEach((t) => { const on = t === tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on ? 'true' : 'false'); });
+      if (form.dataset.type === type) return;
+      tabs.forEach((t) => { const on = t === tab; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1; });
+      form.setAttribute('aria-labelledby', tab.id);
       form.dataset.type = type;
-      if (hint) hint.textContent = hint.getAttribute(`data-hint-${type}`) || '';
-      const sel = form.querySelector('[name="subject"]');
-      if (sel && type === 'investor') sel.value = 'Assured rental / investment';
+      if (message) message.placeholder = message.getAttribute(`data-placeholder-${type}`) || '';
+      if (select) {
+        if (type === 'investor') select.value = 'Assured rental / investment';
+        else if (select.value === 'Assured rental / investment') select.value = '';
+      }
+      if (hasGsap && !reduceMotion) gsap.fromTo($$('.contact-page-form > div'), { y: 8, autoAlpha: 0.2 }, { y: 0, autoAlpha: 1, duration: 0.45, stagger: 0.04, ease: 'power2.out', overwrite: 'auto' });
+    }));
+    // copy-to-clipboard channels (email)
+    $$('[data-copy]').forEach((btn) => btn.addEventListener('click', async () => {
+      const value = btn.getAttribute('data-copy');
+      try { await navigator.clipboard.writeText(value); } catch (err) { window.location.href = `mailto:${value}`; return; }
+      btn.classList.add('is-copied');
+      clearTimeout(btn._copyTimer);
+      btn._copyTimer = setTimeout(() => btn.classList.remove('is-copied'), 1800);
     }));
     // "?subject=One Bed Suite" from a residence page preselects the subject
     const wanted = new URLSearchParams(location.search).get('subject');
-    const select = form.querySelector('[name="subject"]');
     if (wanted && select) {
       const opt = [...select.options].find((o) => o.value.toLowerCase() === wanted.toLowerCase());
       if (opt) select.value = opt.value;
@@ -681,12 +728,14 @@
       const data = new FormData(form);
       const required = ['name', 'phone', 'email'];
       const missing = required.filter((k) => !String(data.get(k) || '').trim());
-      if (missing.length) {
+      const consent = form.querySelector('[name="consent"]');
+      if (missing.length || (consent && !consent.checked)) {
         missing.forEach((k) => { const f = form.querySelector(`[name="${k}"]`); f && f.classList.add('is-invalid'); });
-        if (note) note.textContent = 'Please add your name, phone number and email so we can get back to you.';
-        const first = form.querySelector(`[name="${missing[0]}"]`); first && first.focus();
+        if (note) note.textContent = missing.length ? 'Please add your name, phone number and email so we can get back to you.' : 'Please tick the consent box so we may contact you.';
+        const first = missing.length ? form.querySelector(`[name="${missing[0]}"]`) : consent; first && first.focus();
         return;
       }
+      if (note) note.textContent = '';
       const type = form.dataset.type === 'investor' ? 'Investing' : 'Living here';
       const subject = `Enquiry (${type}): ${data.get('subject') || 'Homeland Global Park'}`;
       const body = [`Name: ${data.get('name')}`, `Phone: ${data.get('phone')}`, `Email: ${data.get('email')}`, `Enquiring as: ${type}`, `Subject: ${data.get('subject') || ''}`, '', String(data.get('message') || '')].join('\n');
@@ -761,6 +810,7 @@
       document.documentElement.classList.remove('preloading');
       document.body.classList.add('preloader-done');
       if ($('.hero-visual') && hasGsap && !reduceMotion) heroIntro({ withVisual: !viaMorph, delay: viaMorph ? 0.35 : 0.1 });
+      else if ($('.contact-hero') && hasGsap && !reduceMotion) contactIntro({ delay: viaMorph ? 0.35 : 0.1 });
       else showEverythingInstantly(); // pages without the square hero (The Experience) still need is-ready + introdone
     }
   }
