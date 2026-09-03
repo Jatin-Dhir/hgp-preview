@@ -301,13 +301,15 @@
     const slot = $('.hero-visual-slot');
     const from = box.getBoundingClientRect();
     const to = slot.getBoundingClientRect();
+    // pin the square to viewport coordinates so shrinking it does not let the grid re-centre it mid-flight
+    gsap.set(box, { position: 'fixed', left: from.left, top: from.top, width: from.width, height: from.height, margin: 0, zIndex: 3 });
 
     const exit = gsap.timeline();
     exit.to(wrapper, { yPercent: -110, duration: 0.5, ease: 'power3.in' }, 0);
     exit.to(bg, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.0, ease: EASE_WIPE }, 0.2);
     exit.to(box, {
-      x: to.left - from.left,
-      y: to.top - from.top,
+      left: to.left,
+      top: to.top,
       width: to.width,
       height: to.height,
       duration: 0.9,
