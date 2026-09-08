@@ -435,6 +435,7 @@
       if (busy || open) return;
       busy = true; open = true;
       fitTitles();
+      cards.forEach((card) => upgradeToFullSize($('.selection-card__cover img', card)));
       emit('open-start');
       document.body.classList.add('selection-open');
       menu.setAttribute('aria-hidden', 'false');
@@ -779,6 +780,17 @@
      so scrolling and the next navigation never meet an unloaded image
      ========================================================= */
   const prefetched = new Set();
+  // the next page shows this photo full-bleed; fetch that size only when the visitor is a click away from it
+  function upgradeToFullSize(img) {
+    const src = (img && img.getAttribute('src')) || '';
+    if (!/-1200\./.test(src) || window.innerWidth <= 650) return;
+    const full = src.replace('-1200.', '-2000.');
+    if (prefetched.has(full)) return;
+    prefetched.add(full);
+    const big = new Image();
+    big.fetchPriority = 'low';
+    big.src = full;
+  }
   function prefetchPage(href) {
     if (!href || prefetched.has(href)) return;
     prefetched.add(href);
@@ -806,15 +818,7 @@
         const href = a.getAttribute('href');
         if (href && /\.html/.test(href) && !/^https?:/i.test(href)) prefetchPage(href.split('#')[0]);
       });
-      if (window.innerWidth > 650) {
-        $$('.selection-card__cover img, .cat-next__parallax img').forEach((img) => {
-          const src = img.getAttribute('src') || '';
-          if (!/-1200\./.test(src)) return;
-          const big = new Image();
-          big.fetchPriority = 'low';
-          big.src = src.replace('-1200.', '-2000.');
-        });
-      }
+      $$('.cat-next__parallax img').forEach(upgradeToFullSize);
     };
     const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 300));
     document.addEventListener('altura:introdone', () => idle(run, { timeout: 1500 }), { once: true });

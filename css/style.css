@@ -1140,3 +1140,15 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
 .lightbox__close svg { width: 45%; height: 45%; }
 .lightbox__close:hover { background: #fff; color: var(--navy); }
 body.lightbox-open { overflow: hidden; }
+
+@media (pointer: coarse) {
+  .selection-btn, .menu-btn { min-height: 44px; }
+}
+
+.nav-menu__legal {
+  display: flex;
+  gap: 1.5em;
+  margin-top: calc(var(--menu-panel-pad) * 0.55);
+  font-size: var(--menu-contact);
+  color: var(--menu-muted);
+}

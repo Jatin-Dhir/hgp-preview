@@ -122,7 +122,7 @@
     }
 
     // colour theme flips once the white sections arrive
-    const gallery = $('.cat-gallery') || $('.home-collections') || $('.xp-services') || $('.about-intro');
+    const gallery = $('.cat-gallery') || $('.xp-services');
     if (gallery) {
       ScrollTrigger.create({
         trigger: gallery,
@@ -218,13 +218,6 @@
         scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: 0.4, invalidateOnRefresh: true },
       });
     });
-    $$('.about-figure img, .home-story__figure img:not([data-parallax-figure])').forEach((img) => {
-      gsap.set(img, { scale: 1.12 });
-      gsap.fromTo(img, { yPercent: -5 }, {
-        yPercent: 5, ease: 'none',
-        scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.4, invalidateOnRefresh: true },
-      });
-    });
     $$('.cat-next').forEach((sec) => {
       const p = $('.cat-next__parallax', sec);
       if (!p) return;
@@ -237,27 +230,6 @@
   }
 
   /* ---------- pinned strip: vertical scroll moves the row sideways ---------- */
-  function initStrip(root) {
-    const viewport = $('.strip__viewport', root);
-    const track = $('.strip__track', root);
-    if (!viewport || !track || reduce) return;
-    const pad = () => parseFloat(getComputedStyle(viewport).paddingLeft) || 0;
-    const dist = () => Math.max(0, track.scrollWidth + pad() * 2 - vw());
-    gsap.to(track, {
-      x: () => -dist(),
-      ease: 'none',
-      scrollTrigger: {
-        trigger: root,
-        start: 'top top',
-        end: () => `+=${dist()}`,
-        pin: true,
-        scrub: 0.7,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
-    });
-  }
-
   /* ---------- tilted slider: driven by the page scroll, drag and arrows add an offset ---------- */
   function initSlider(root) {
     const viewport = $('.slider__viewport', root);
@@ -301,7 +273,7 @@
       viewport.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         dragging = true; startX = e.clientX; startOffset = offset;
-        viewport.setPointerCapture(e.pointerId);
+        try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
       });
       viewport.addEventListener('pointermove', (e) => { if (dragging) { offset = clamp(startOffset + (e.clientX - startX)); show(offset); } });
       const end = () => { dragging = false; offset = target; };
@@ -340,7 +312,7 @@
     viewport.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
       dragging = true; startX = e.clientX; startY = window.scrollY;
-      viewport.setPointerCapture(e.pointerId);
+      try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
       viewport.classList.add('is-dragging');
     });
     viewport.addEventListener('pointermove', (e) => {
@@ -413,7 +385,6 @@
     initHeroGrow();
     initParallax();
     $$('[data-slider]').forEach(initSlider);
-    $$('[data-strip]').forEach(initStrip);
     initSelectionFreeze();
     ScrollTrigger.refresh();
     // split text only once the web fonts are in, so the line breaks match the final typesetting (fontsReady is capped at 1.5 s)
