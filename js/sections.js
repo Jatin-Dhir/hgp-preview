@@ -269,74 +269,89 @@
 
     let target = 0;
     let max = 0;
-    let scrollX = 0;
-    let offset = 0;
-    let dragging = false;
-    let startX = 0;
-    let startOffset = 0;
-
     const gap = () => parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
     const step = () => items[0].offsetWidth + gap();
     const measure = () => {
       const w = items.reduce((n, it) => n + it.offsetWidth, 0) + gap() * (items.length - 1);
       max = Math.max(0, w - track.offsetWidth);
     };
+    const clamp = (v) => Math.min(0, Math.max(-max, v));
     const setX = reduce
       ? (v) => gsap.set(track, { x: v })
-      : gsap.quickTo(track, 'x', { duration: 0.9, ease: 'power3.out' });
-    const clamp = (v) => Math.min(0, Math.max(-max, v));
+      : gsap.quickTo(track, 'x', { duration: 0.6, ease: 'power3.out' });
     const updateArrows = () => {
       if (prev) prev.disabled = target >= -1;
       if (next) next.disabled = target <= -max + 1;
     };
-    const apply = () => { target = clamp(scrollX + offset); setX(target); updateArrows(); };
+    const show = (x) => { target = clamp(x); setX(target); updateArrows(); };
+    measure();
+    updateArrows();
+    viewport.setAttribute('tabindex', '0');
+    const onKeys = (fn) => viewport.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); fn(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); fn(-1); }
+    });
 
-    // scroll drive: the strip travels most of its length while the section passes through the viewport
-    if (!reduce) {
-      ScrollTrigger.create({
-        trigger: root,
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate: (self) => { scrollX = -max * 0.85 * self.progress; apply(); },
-        invalidateOnRefresh: true,
+    if (reduce || max <= 0) {
+      // no pinning (reduced motion, or everything already fits): drag and arrows move the strip directly
+      let offset = 0;
+      let dragging = false;
+      let startX = 0;
+      let startOffset = 0;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true; startX = e.clientX; startOffset = offset;
+        viewport.setPointerCapture(e.pointerId);
       });
+      viewport.addEventListener('pointermove', (e) => { if (dragging) { offset = clamp(startOffset + (e.clientX - startX)); show(offset); } });
+      const end = () => { dragging = false; offset = target; };
+      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => viewport.addEventListener(t, end));
+      const by = (dir) => { offset = clamp(target - dir * step()); show(offset); };
+      if (prev) prev.addEventListener('click', () => by(-1));
+      if (next) next.addEventListener('click', () => by(1));
+      onKeys(by);
+      return;
     }
 
+    // pinned scroll-through: the strip parks in view and the page scroll plays every photo before the page moves on
+    const travel = () => Math.round(max * 0.85);
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: () => `top ${Math.max(0, Math.round((vh() - root.offsetHeight) / 2))}px`,
+      end: () => `+=${travel()}`,
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onRefreshInit: measure,
+      onUpdate: (self) => show(-max * self.progress),
+    });
+
+    // drag, arrows and keys move the page scroll itself, so the strip and the pin always agree
+    const scrollFor = (x) => st.start + (Math.min(max, Math.max(0, -x)) / max) * travel();
+    const goTo = (y, immediate = false) => {
+      const to = Math.min(st.end, Math.max(st.start, y));
+      if (window.lenis) window.lenis.scrollTo(to, immediate ? { immediate: true, force: true } : { duration: 0.8 });
+      else window.scrollTo({ top: to, behavior: immediate ? 'auto' : 'smooth' });
+    };
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
     viewport.addEventListener('pointerdown', (e) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return;
-      dragging = true;
-      startX = e.clientX;
-      startOffset = offset;
+      dragging = true; startX = e.clientX; startY = window.scrollY;
       viewport.setPointerCapture(e.pointerId);
       viewport.classList.add('is-dragging');
     });
     viewport.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      offset = startOffset + (e.clientX - startX) * 1.35;
-      apply();
+      if (dragging) goTo(startY + (startX - e.clientX) * (travel() / max) * 1.2, true);
     });
-    const end = () => {
-      if (!dragging) return;
-      dragging = false;
-      viewport.classList.remove('is-dragging');
-      offset = target - scrollX; // keep the clamped position
-    };
-    viewport.addEventListener('pointerup', end);
-    viewport.addEventListener('pointercancel', end);
-    viewport.addEventListener('lostpointercapture', end);
-
-    if (prev) prev.addEventListener('click', () => { offset += step(); apply(); offset = target - scrollX; });
-    if (next) next.addEventListener('click', () => { offset -= step(); apply(); offset = target - scrollX; });
-    viewport.setAttribute('tabindex', '0');
-    viewport.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); offset -= step(); apply(); offset = target - scrollX; }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); offset += step(); apply(); offset = target - scrollX; }
-    });
-
-    const ro = new ResizeObserver(() => { measure(); apply(); });
-    ro.observe(track);
-    measure();
-    updateArrows();
+    const end = () => { dragging = false; viewport.classList.remove('is-dragging'); };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => viewport.addEventListener(t, end));
+    const by = (dir) => goTo(scrollFor(target - dir * step()));
+    if (prev) prev.addEventListener('click', () => by(-1));
+    if (next) next.addEventListener('click', () => by(1));
+    onKeys(by);
   }
 
   /* ---------- selection overlay: freeze the scrolled page while it is open ---------- */
