@@ -821,6 +821,30 @@ html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .contact-btn, .marque
   .contact-page-form .contact-form__row { grid-template-columns: 1fr; gap: calc(0.45vw * var(--s)); }
 }
 
+/* ---------- Footer ---------- */
+.site-foot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--grid-gap);
+  /* bottom padding keeps the contact block clear of the fixed buttons */
+  padding: calc(3vw * var(--s)) var(--grid-pad) calc(var(--action-h) + var(--grid-pad) * 1.6);
+  border-top: 1px solid rgba(47, 39, 33, 0.12);
+  background: var(--paper);
+  color: var(--navy);
+  font-size: calc(var(--small) * 0.85);
+}
+body.category .site-foot { color: var(--cat); }
+.site-foot__brand { display: flex; align-items: center; gap: calc(1.6vw * var(--s)); }
+.site-foot__logo { height: calc(3.4vw * var(--s)); width: auto; }
+.site-foot__meta, .site-foot__contact { display: flex; flex-direction: column; gap: 0.6em; }
+.site-foot__meta { align-items: center; text-align: center; }
+.site-foot__contact { align-items: flex-end; text-align: right; }
+.site-foot__links { display: flex; gap: 1.5em; }
+.site-foot [data-copyright] { color: var(--cat-muted, var(--muted)); }
+
 /* =========================================================
    The Experience — light editorial page (distinct from the residences)
    ========================================================= */
@@ -1106,6 +1130,7 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
   .tile:nth-child(even) { margin-top: 0; }
   .logo-lockup img { height: 10vw; }
   .logo-lockup__divider { height: 9vw; }
+  .hero-price { font-size: 2.55vw; letter-spacing: 0.07em; padding-inline: 0.9em; white-space: nowrap; }
   .site-foot { grid-template-columns: 1fr; gap: 6vw; padding: 10vw 6vw; }
   .site-foot__meta, .site-foot__contact { align-items: flex-start; text-align: left; }
   .site-foot__logo { height: 9vw; }

@@ -36,6 +36,17 @@
   });
   /** Name the elements that should morph into the next page's hero, then navigate.
    *  A view-transition name must be unique on the page, so the current hero gives its name up first. */
+  /* the card cover is the 1200px file; the page it opens paints the same photo at 2000px (or the phone portrait crop).
+     Decode that file before leaving so the morph lands on a finished image instead of a placeholder. */
+  function warmNextHero(coverImg, cap = 1.2) {
+    const src = coverImg && (coverImg.currentSrc || coverImg.src);
+    if (!src || !/-1200\./.test(src)) return Promise.resolve();
+    const portrait = window.matchMedia('(max-width: 650px) and (orientation: portrait)').matches;
+    const img = new Image();
+    img.src = src.replace('-1200.', portrait ? '-portrait.' : '-2000.');
+    return Promise.race([img.decode().catch(() => {}), wait(cap)]);
+  }
+
   function navigateWithMorph(href, { visual, bg } = {}) {
     if (supportsVT) {
       $$('.hero-visual, .hero-sticky').forEach((el) => { el.style.viewTransitionName = 'none'; });
@@ -494,12 +505,14 @@
         const href = card.getAttribute('href');
         const others = cards.filter((c) => c !== card);
         // the other cards jump off and the page fades; then the chosen card's cover morphs into the next hero
-        gsap.timeline({
-          onComplete: () => navigateWithMorph(href, { visual: $('.selection-card__cover', card), bg: $('.selection-card__panel', card) }),
-        })
-          .to(others, { autoAlpha: 0, yPercent: -12, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 0)
-          .to(stage, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
-          .to(card, { scale: 1.03, duration: 0.6, ease: 'power2.inOut' }, 0);
+        const ready = warmNextHero($('.selection-card__cover img', card));
+        const exit = new Promise((resolve) => {
+          gsap.timeline({ onComplete: resolve })
+            .to(others, { autoAlpha: 0, yPercent: -12, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 0)
+            .to(stage, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
+            .to(card, { scale: 1.03, duration: 0.6, ease: 'power2.inOut' }, 0);
+        });
+        Promise.all([exit, ready]).then(() => navigateWithMorph(href, { visual: $('.selection-card__cover', card), bg: $('.selection-card__panel', card) }));
       });
     });
   }
@@ -867,10 +880,12 @@
       const next = a.closest('.cat-next');
       if (next) {
         // the teaser photo hands over to the next page's hero; everything else fades first
-        gsap.timeline({ onComplete: () => navigateWithMorph(href, { visual: $('.cat-next__viewport', next), bg: next }) })
+        const ready = warmNextHero($('.cat-next__parallax img', next));
+        const exit = new Promise((resolve) => gsap.timeline({ onComplete: resolve })
           .to($$('#page-stage main > *:not(.cat-next)'), { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
           .to('.site-actions', { autoAlpha: 0, duration: 0.3 }, 0)
-          .to($('.cat-next__body', next), { autoAlpha: 0, y: -16, duration: 0.3, ease: 'power2.out' }, 0);
+          .to($('.cat-next__body', next), { autoAlpha: 0, y: -16, duration: 0.3, ease: 'power2.out' }, 0));
+        Promise.all([exit, ready]).then(() => navigateWithMorph(href, { visual: $('.cat-next__viewport', next), bg: next }));
         return;
       }
       gsap.to('#page-stage, .site-actions', { autoAlpha: 0, duration: 0.35, ease: 'power2.out', onComplete: () => navigateWithMorph(href) });

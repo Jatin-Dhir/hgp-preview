@@ -98,7 +98,7 @@
     --h2: 10vw;
     --logo-w: 58vw;
     --logo-h: 13vw;
-    --visual: min(50vw, 220px, 26svh);
+    --visual: min(62vw, 270px, 32svh);
     --hero-content-w: 88vw;
     --hero-text: 5.4vw;
     --h1: 22vw;
@@ -1025,7 +1025,7 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
   .about-btn, .contact-btn { font-size: 3.4vw; align-self: center; }
   .logo { margin-top: 2vw; }
   .hero-section { gap: 12svh; }
-  .hero-top { margin-top: -8svh; }
+  .hero-top { margin-top: -6svh; }
   .marquee { padding-bottom: 5vw; }
   .hero-content h1,
   .hero-content p:not(.hero-price) { font-size: var(--hero-text); }
