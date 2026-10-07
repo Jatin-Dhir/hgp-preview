@@ -63,6 +63,28 @@
     setSpacer();
     ScrollTrigger.addEventListener('refreshInit', setSpacer);
 
+    // colour theme flips once the white sections arrive (with reduced motion too: it is colour, not motion)
+    const gallery = $('.cat-gallery') || $('.xp-services');
+    if (gallery) {
+      ScrollTrigger.create({
+        trigger: gallery,
+        start: 'top 65%',
+        onEnter: () => body.classList.add('past-hero'),
+        onLeaveBack: () => body.classList.remove('past-hero'),
+      });
+      // the Our Residences pill sits near the bottom: it turns solid when the white reaches its own line,
+      // otherwise its white outline crosses the white page unseen until the 65% flip
+      const actions = $('.site-actions');
+      if (actions) {
+        ScrollTrigger.create({
+          trigger: gallery,
+          start: () => `top ${Math.round(actions.offsetTop + actions.offsetHeight / 2)}px`,
+          onEnter: () => body.classList.add('actions-light'),
+          onLeaveBack: () => body.classList.remove('actions-light'),
+        });
+      }
+    }
+
     if (reduce) return;
 
     const slotRel = () => {
@@ -120,21 +142,34 @@
       };
       tl.eventCallback('onUpdate', sync);
     }
-
-    // colour theme flips once the white sections arrive
-    const gallery = $('.cat-gallery') || $('.xp-services');
-    if (gallery) {
-      ScrollTrigger.create({
-        trigger: gallery,
-        start: 'top 65%',
-        onEnter: () => body.classList.add('past-hero'),
-        onLeaveBack: () => body.classList.remove('past-hero'),
-      });
-    }
   }
 
   /* ---------- reveals ---------- */
-  const once = (el, extra = {}) => ({ trigger: el, start: 'top 85%', once: true, ...extra });
+  // reveals start as a block enters the screen and stay short, so content never feels late (was 'top 85%', ~1 s)
+  const once = (el, extra = {}) => ({ trigger: el, start: 'top 95%', once: true, ...extra });
+
+  // Blocks still waiting for their scroll position. Content is hidden by opacity only, never visibility, so the links
+  // inside stay in the tab order and the accessibility tree; keyboard focus landing in a block plays it at once.
+  const pending = new Set();
+  const conceal = (targets, vars) => gsap.set(targets, { opacity: 0, pointerEvents: 'none', ...vars });
+  const release = (targets) => gsap.utils.toArray(targets).forEach((t) => { t.style.pointerEvents = ''; });
+  function revealOn(el, play, extra) {
+    let st = null;
+    const entry = {
+      el,
+      run(quick) {
+        if (!pending.delete(entry)) return;
+        if (quick && st) st.kill();
+        play(quick);
+      },
+    };
+    pending.add(entry);
+    st = ScrollTrigger.create({ ...once(el, extra), onEnter: () => entry.run(false) });
+  }
+  const revealFocused = (target) => {
+    if (!target || target === body) return;
+    pending.forEach((entry) => { if (entry.el.contains(target)) entry.run(true); });
+  };
 
   function initReveals() {
     body.classList.add('reveals-ready');
@@ -145,12 +180,13 @@
       if (el.closest('.hero-content')) return; // handled by the hero intro
       A.hideLines(el);
       el.classList.add('is-split');
-      ScrollTrigger.create({ ...once(el), onEnter: () => A.revealLines(el, { stagger: 0.09, duration: 0.9 }) });
+      revealOn(el, () => A.revealLines(el, { stagger: 0.06, duration: 0.65 }));
     });
 
+    // quick = reached by keyboard: a short fade so the focused link and its ring show straight away
     $$('[data-fade]').forEach((el) => {
-      gsap.set(el, { autoAlpha: 0, y: 26 });
-      ScrollTrigger.create({ ...once(el), onEnter: () => gsap.to(el, { autoAlpha: 1, y: 0, duration: 0.95, ease: 'power3.out' }) });
+      conceal(el, { y: 18 });
+      revealOn(el, (quick) => gsap.to(el, { opacity: 1, y: 0, duration: quick ? 0.35 : 0.6, ease: 'power3.out', onStart: () => release(el) }));
     });
 
     $$('[data-clip]').forEach((el) => {
@@ -158,44 +194,41 @@
       gsap.set(el, { clipPath: 'inset(0% 0% 100% 0%)' });
       const scaleIt = img && !img.hasAttribute('data-parallax-figure');
       if (scaleIt) gsap.set(img, { scale: 1.12 });
-      ScrollTrigger.create({
-        ...once(el, { start: 'top 82%' }),
-        onEnter: () => {
-          gsap.to(el, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.15, ease: 'power4.out' });
-          if (scaleIt) gsap.to(img, { scale: 1, duration: 1.35, ease: 'power4.out' });
-        },
-      });
+      revealOn(el, (quick) => {
+        gsap.to(el, { clipPath: 'inset(0% 0% 0% 0%)', duration: quick ? 0.45 : 0.8, ease: 'power4.out' });
+        if (scaleIt) gsap.to(img, { scale: 1, duration: quick ? 0.55 : 0.95, ease: 'power4.out' });
+      }, { start: 'top 92%' });
     });
 
     $$('[data-line]').forEach((el) => {
       gsap.set(el, { scaleY: 0 });
-      ScrollTrigger.create({ ...once(el), onEnter: () => gsap.to(el, { scaleY: 1, duration: 1, ease: 'power3.out' }) });
+      revealOn(el, () => gsap.to(el, { scaleY: 1, duration: 0.7, ease: 'power3.out' }));
     });
 
     $$('.cat-intro__line').forEach((el) => {
       gsap.set(el, { scaleY: 0 });
-      ScrollTrigger.create({ ...once(el), onEnter: () => gsap.to(el, { scaleY: 1, duration: 1, ease: 'power3.out' }) });
+      revealOn(el, () => gsap.to(el, { scaleY: 1, duration: 0.7, ease: 'power3.out' }));
     });
 
     $$('[data-slider]').forEach((s) => {
       const items = $$('.slider__item', s);
-      gsap.set(items, { autoAlpha: 0, y: 48 });
-      ScrollTrigger.create({
-        ...once(s, { start: 'top 78%' }),
-        onEnter: () => gsap.to(items, { autoAlpha: 1, y: 0, duration: 1.05, ease: 'power3.out', stagger: 0.08 }),
-      });
+      conceal(items, { y: 36 });
+      revealOn(s, (quick) => gsap.to(items, { opacity: 1, y: 0, duration: quick ? 0.4 : 0.7, ease: 'power3.out', stagger: quick ? 0.03 : 0.05, onStart: () => release(items) }), { start: 'top 90%' });
     });
 
     $$('.marquee--outro .marquee-reveal').forEach((el) => {
       gsap.set(el, { yPercent: 30, autoAlpha: 0 });
-      ScrollTrigger.create({ ...once(el, { start: 'top 90%' }), onEnter: () => gsap.to(el, { yPercent: 0, autoAlpha: 1, duration: 1.2, ease: 'power3.out' }) });
+      revealOn(el, () => gsap.to(el, { yPercent: 0, autoAlpha: 1, duration: 0.8, ease: 'power3.out' }), { start: 'top 98%' });
     });
 
     $$('.cat-next__body').forEach((el) => {
       const kids = Array.from(el.children);
-      gsap.set(kids, { y: 24, autoAlpha: 0 });
-      ScrollTrigger.create({ ...once(el.closest('.cat-next'), { start: 'top 75%' }), onEnter: () => gsap.to(kids, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.09, ease: 'power3.out' }) });
+      conceal(kids, { y: 24 });
+      revealOn(el.closest('.cat-next'), (quick) => gsap.to(kids, { y: 0, opacity: 1, duration: quick ? 0.35 : 0.6, stagger: quick ? 0.04 : 0.06, ease: 'power3.out', onStart: () => release(kids) }), { start: 'top 88%' });
     });
+
+    document.addEventListener('focusin', (e) => revealFocused(e.target));
+    revealFocused(document.activeElement); // focus that arrived while the fonts were still loading
   }
 
   /* ---------- parallax ---------- */

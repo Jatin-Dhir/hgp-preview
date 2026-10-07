@@ -105,17 +105,22 @@ body.category .site-menu {
   --btn-text-hover: var(--cat);
   --btn-bg: transparent;
 }
+/* the pill's transparent outline only reads on the flat hero colour: it turns solid once the grown photo or the
+   white sections are behind it (actions-light is measured at the pill's own line in sections.js) */
 body.category.past-hero .site-actions,
-body.category.past-hero .site-menu {
+body.category.past-hero .site-menu,
+body.category.hero-grown .site-actions,
+body.category.actions-light .site-actions {
   --btn-fill: var(--cat);
   --btn-text-hover: #fff;
   --btn-bg: #fff;
 }
 
-/* elements that reveal on scroll stay hidden until the scroll script has primed them */
+/* elements that reveal on scroll stay hidden until the scroll script has primed them. Opacity, not visibility:
+   the links inside must stay in the tab order (sections.js plays a block early when keyboard focus lands in it) */
 html.js body:not(.reveals-ready) main [data-lines]:not(.hero-content [data-lines]),
 html.js body:not(.reveals-ready) main [data-fade],
-html.js body:not(.reveals-ready) main [data-clip] { visibility: hidden; }
+html.js body:not(.reveals-ready) main [data-clip] { opacity: 0; pointer-events: none; }
 
 /* ---------- Shared section shells ---------- */
 .cat-gallery,
@@ -528,6 +533,24 @@ button.cat-cta__link { padding: 0; border: 0; background: none; color: inherit; 
   .cat-next__content:hover .cat-next__viewport { transform: scale(1.05); }
   .cat-next__content:hover .cat-next__overlay { background: rgba(0, 0, 0, 0.14); }
 }
+/* keyboard focus: the link fills a section that clips its overflow, and the photo layers paint over an inset outline,
+   so the ring is its own layer inside the photo. White with an espresso edge: one of the two clears 3:1 on any pixel */
+.cat-next__content:focus-visible { outline: none; }
+.cat-next__content::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  z-index: 2;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--navy), inset 0 0 0 1px var(--navy); /* espresso: --ink is white on residence pages */
+  opacity: 0;
+  pointer-events: none;
+}
+.cat-next__content:focus-visible::after { opacity: 1; }
+body.is-leaving .cat-next__content::after { opacity: 0; } /* the photo morphs into the next hero without the ring */
+@media (prefers-reduced-motion: no-preference) {
+  .cat-next__content:focus-visible .cat-next__viewport { transform: scale(1.05); }
+}
 
 .about-pillars {
   display: grid;
@@ -566,6 +589,7 @@ button.cat-cta__link { padding: 0; border: 0; background: none; color: inherit; 
 
 body.contact { color: var(--ink); background: var(--paper); min-height: 100svh; }
 body.contact #page-stage, body.contact main { background: var(--paper); }
+body.contact .site-actions { --btn-bg: #fff; } /* solid pill: where the page scrolls (tablet, phone) the form passes behind it */
 .contact-hero { position: relative; height: 100svh; max-height: 100svh; overflow: hidden; }
 .contact-hero__grid {
   position: relative;
@@ -870,7 +894,9 @@ body.experience {
   min-height: 100svh;
 }
 body.experience #page-stage, body.experience main { overflow: visible; background: var(--paper); }
-body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp-accent); --btn-text-hover: #fff; --btn-bg: transparent; }
+/* solid pill, as on the residence pages below their hero: photos, page text and the walnut and espresso bands all
+   pass behind it here, and a transparent pill lets them through its label (the menu button is already solid) */
+body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp-accent); --btn-text-hover: #fff; --btn-bg: #fff; }
 
 /* hero: a text block over sand, then a wide picture that clips in */
 .xp-hero { position: relative; background: var(--sand); }
