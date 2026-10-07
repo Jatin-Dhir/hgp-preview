@@ -731,6 +731,7 @@ body.preloader-done .site-preloader { display: none; }
   opacity: 0;
   will-change: transform, opacity;
 }
+.site-preloader__frame picture { display: contents; }
 .site-preloader__frame img {
   width: 100%;
   height: 100%;
@@ -827,8 +828,9 @@ body:not(.home) .hero-sticky { view-transition-name: hero-bg; }
   background: var(--selection-bg);
   visibility: hidden;
   pointer-events: none;
+  content-visibility: hidden; /* closed: not rendered, so its card photos wait for the idle warm-up or the first open */
 }
-body.selection-open #selection-menu { visibility: visible; pointer-events: auto; }
+body.selection-open #selection-menu { visibility: visible; pointer-events: auto; content-visibility: visible; }
 body.selection-open { overflow: hidden; }
 body.selection-open #page-stage {
   position: fixed;

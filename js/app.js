@@ -85,6 +85,15 @@
     ]);
   }
   const heroMedia = () => $('.hero-visual img') || $('.hero-visual video');
+  /* the home film (1-3 MB) is preload="none" in the markup so it never competes with the loader frames and logos;
+     it starts buffering once they are in and plays at the hand-off. Its poster (the loader's last frame) covers any gap.
+     Reduced motion keeps the poster: no autoplaying film. */
+  function bufferHeroVideo({ play = false } = {}) {
+    const v = $('.hero-visual video');
+    if (!v || reduceMotion) return;
+    if (v.preload !== 'auto') { v.preload = 'auto'; v.load(); }
+    if (play) v.play().catch(() => {});
+  }
 
   /* =========================================================
      Split text into lines (own implementation, no plugin)
@@ -345,16 +354,18 @@
     gsap.set(wrapper, { yPercent: 100 });
     gsap.to(wrapper, { yPercent: 0, duration: 0.85, ease: 'power4.out', delay: 0.1 });
 
-    await wait(0.4);
+    await wait(0.25);
     for (let i = 0; i < frames.length; i++) {
       await loadImage(imgs[i]);
       revealFrame(i);
       tick(steps[i] ?? 99);
-      await wait(i === frames.length - 1 ? 0.55 : 0.45);
+      await wait(i === frames.length - 1 ? 0.4 : 0.32);
     }
     tick(99);
-    await Promise.all([loadImage(heroImg, 4), fontsReady]);
-    await wait(0.2);
+    bufferHeroVideo(); // the frames are in: the film can have the bandwidth now
+    // a hero photo must be decoded before the hand-off; the film does not (its poster is the frame already on screen)
+    await Promise.all([heroImg && heroImg.tagName !== 'VIDEO' ? loadImage(heroImg, 4) : null, fontsReady]);
+    await wait(0.1);
 
     // ---- exit: counter leaves, blue wipes upward, frame morphs into the hero slot
     document.body.classList.add('preloader-exit');
@@ -450,10 +461,10 @@
     const openMenu = () => {
       if (busy || open) return;
       busy = true; open = true;
-      fitTitles();
-      cards.forEach((card) => upgradeToFullSize($('.selection-card__cover img', card)));
       emit('open-start');
       document.body.classList.add('selection-open');
+      fitTitles(); // the closed overlay is not rendered (content-visibility), so measure once it is
+      cards.forEach((card) => upgradeToFullSize($('.selection-card__cover img', card)));
       menu.setAttribute('aria-hidden', 'false');
       btn.setAttribute('aria-expanded', 'true');
       // everything moves with the scroll: the page lifts away to the top, the residences rise from the bottom
@@ -929,6 +940,7 @@
     if (isHome && !viaMorph) {
       const ran = await runPreloader();
       if (!ran) {
+        bufferHeroVideo({ play: true });
         document.documentElement.classList.remove('preloading');
         document.body.classList.add('preloader-done');
         if (hasGsap && !reduceMotion) heroIntro({ withVisual: true });
@@ -938,6 +950,7 @@
       // arriving through a page morph (or a page without a loader): no loader, the hero image is already in place
       const pre = $('#site-preloader');
       if (pre) pre.remove();
+      bufferHeroVideo({ play: true });
       document.documentElement.classList.remove('preloading');
       document.body.classList.add('preloader-done');
       if ($('.hero-visual') && hasGsap && !reduceMotion) heroIntro({ withVisual: !viaMorph, delay: viaMorph ? 0.35 : 0.1 });
