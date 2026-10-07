@@ -51,8 +51,7 @@ body.category main { overflow: visible; background: var(--cat); }
 
 .hero-stage .page-grid { overflow: visible; }
 .hero-stage .logo,
-.hero-stage .about-btn,
-.hero-stage .contact-btn { position: relative; z-index: 6; transition: color 0.5s ease; }
+.hero-stage .about-btn { position: relative; z-index: 6; transition: color 0.5s ease; }
 .hero-stage .hero-visual-slot { z-index: 5; }
 .hero-stage .hero-visual {
   position: absolute;
@@ -76,14 +75,15 @@ body.category .hero-sticky { background: var(--cat); }
 
 /* home: chrome turns white while the grown photo covers the screen */
 body.home.hero-grown .logo,
-body.home.hero-grown .about-btn,
-body.home.hero-grown .contact-btn { color: #fff; }
-body.home.hero-grown .site-actions {
+body.home.hero-grown .about-btn { color: #fff; }
+body.home.hero-grown .site-actions,
+body.home.hero-grown .site-menu {
   --btn-fill: #fff;
   --btn-text-hover: var(--navy);
   --btn-bg: transparent;
 }
-body.home.past-hero .site-actions {
+body.home.past-hero .site-actions,
+body.home.past-hero .site-menu {
   --btn-fill: var(--navy);
   --btn-text-hover: #fff;
   --btn-bg: transparent;
@@ -99,12 +99,14 @@ body.home.past-hero .site-actions {
 body.category .hero-content { z-index: 1; }
 
 /* fixed actions flip when the white sections take over */
-body.category .site-actions {
+body.category .site-actions,
+body.category .site-menu {
   --btn-fill: #fff;
   --btn-text-hover: var(--cat);
   --btn-bg: transparent;
 }
-body.category.past-hero .site-actions {
+body.category.past-hero .site-actions,
+body.category.past-hero .site-menu {
   --btn-fill: var(--cat);
   --btn-text-hover: #fff;
   --btn-bg: #fff;
@@ -379,6 +381,14 @@ html.js body:not(.reveals-ready) main [data-clip] { visibility: hidden; }
   padding-inline: var(--grid-pad);
 }
 .cat-gallery__foot .cat-cta__link { margin-top: 0; }
+/* residence pages: floor plan | all photos, with Know More directly under View all photos */
+body.category .cat-gallery__foot {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: center;
+  justify-items: start;
+}
+.cat-gallery__more { grid-column: 2; font: inherit; } /* same size as View all photos, its pair */
 button.cat-cta__link { padding: 0; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
 .tiles {
   display: grid;
@@ -790,9 +800,9 @@ body.contact #page-stage, body.contact main { background: var(--paper); }
 .contact-form__submit:focus-visible { background-position: 0 0; color: var(--accent); }
 
 /* entrance: everything stays hidden until the intro reveals it */
-html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .contact-btn, .marquee-reveal, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div, .site-actions) { visibility: hidden; }
+html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .site-menu, .marquee-reveal, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div, .site-actions) { visibility: hidden; }
 @media (prefers-reduced-motion: reduce) {
-  html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .contact-btn, .marquee-reveal, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div, .site-actions) { visibility: visible; }
+  html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .site-menu, .marquee-reveal, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div, .site-actions) { visibility: visible; }
 }
 
 /* tablet & phone: the screen unrolls into a scrolling page, the word runs horizontally at the top */
@@ -826,7 +836,7 @@ html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .contact-btn, .marque
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
   gap: var(--grid-gap);
   /* bottom padding keeps the contact block clear of the fixed buttons */
@@ -837,10 +847,8 @@ html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .contact-btn, .marque
   font-size: calc(var(--small) * 0.85);
 }
 body.category .site-foot { color: var(--cat); }
-.site-foot__brand { display: flex; align-items: center; gap: calc(1.6vw * var(--s)); }
-.site-foot__logo { height: calc(3.4vw * var(--s)); width: auto; }
 .site-foot__meta, .site-foot__contact { display: flex; flex-direction: column; gap: 0.6em; }
-.site-foot__meta { align-items: center; text-align: center; }
+.site-foot__meta { align-items: flex-start; text-align: left; }
 .site-foot__contact { align-items: flex-end; text-align: right; }
 .site-foot__links { display: flex; gap: 1.5em; }
 .site-foot [data-copyright] { color: var(--cat-muted, var(--muted)); }
@@ -861,7 +869,7 @@ body.experience {
   min-height: 100svh;
 }
 body.experience #page-stage, body.experience main { overflow: visible; background: var(--paper); }
-body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: #fff; --btn-bg: transparent; }
+body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp-accent); --btn-text-hover: #fff; --btn-bg: transparent; }
 
 /* hero: a text block over sand, then a wide picture that clips in */
 .xp-hero { position: relative; background: var(--sand); }
@@ -1087,8 +1095,6 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
   .cat-pull-quote__text { font-size: calc(var(--h3) * 0.72); }
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: calc(4vw * var(--s)); }
   .tile:nth-child(even) { margin-top: 0; }
-  .site-foot { grid-template-columns: 1fr 1fr; }
-  .site-foot__contact { grid-column: 1 / -1; align-items: flex-start; text-align: left; }
   .logo-lockup img { height: calc(3.4vw * var(--s)); }
 }
 
@@ -1111,6 +1117,8 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
     --next-label: 3vw;
   }
   .cat-intro h2, .cat-cta h2, .cat-quote__text { font-size: 10vw; }
+  body.category .cat-gallery__foot { grid-template-columns: auto; }
+  .cat-gallery__more { grid-column: auto; }
   .slider { margin-top: 10vw; padding-bottom: 22vw; }
   .slider__viewport { rotate: -6deg; }
   .slider__item { rotate: 6deg; }
@@ -1130,10 +1138,9 @@ body.experience .site-actions { --btn-fill: var(--xp-accent); --btn-text-hover: 
   .tile:nth-child(even) { margin-top: 0; }
   .logo-lockup img { height: 10vw; }
   .logo-lockup__divider { height: 9vw; }
-  .hero-price { font-size: 2.55vw; letter-spacing: 0.07em; padding-inline: 0.9em; white-space: nowrap; }
+  .hero-price { font-size: max(11.5px, 3vw); letter-spacing: 0.12em; padding-inline: 0.9em; white-space: nowrap; }
   .site-foot { grid-template-columns: 1fr; gap: 6vw; padding: 10vw 6vw; }
   .site-foot__meta, .site-foot__contact { align-items: flex-start; text-align: left; }
-  .site-foot__logo { height: 9vw; }
   .slider__caption { flex-direction: column; gap: 0.3em; }
   .slider__specs { text-align: left; }
   .site-foot { flex-direction: column; align-items: flex-start; gap: 4vw; padding: 8vw 6vw; }
@@ -1151,9 +1158,9 @@ body.legal .site-actions { display: none; }
   padding: calc(8vw * var(--s)) var(--grid-pad) var(--sec-pad);
 }
 .legal-page__eyebrow {
-  font-family: var(--font-wide);
-  font-stretch: 125%;
-  font-size: calc(var(--small) * 0.72);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: calc(var(--small) * 0.74);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted);

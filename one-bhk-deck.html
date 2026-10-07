@@ -20,9 +20,9 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Archivo:wdth,wght@125,500&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mu1wnzmr">
-  <link rel="stylesheet" href="css/sections.css?v=mu1wnzmr">
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=muxz9fzm">
+  <link rel="stylesheet" href="css/sections.css?v=muxz9fzm">
 
 </head>
 <body class="category" data-category="one-bhk" style="--cat: #33493f; --cat-muted: #5f6d66;">
@@ -64,6 +64,13 @@
     </div>
   </nav>
 
+  <!-- the menu button sits top right, level with the logo; it is fixed so it stays reachable on long pages -->
+  <div class="site-menu">
+    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
+    </button>
+  </div>
+
 
   <div id="page-stage">
     <main>
@@ -74,13 +81,14 @@
           <div class="page-grid">
         <nav class="site-nav" aria-label="Primary">
           <header class="logo">
-            <a href="index.html" aria-label="Homeland Global Park — home">
+            <a href="index.html" aria-label="Homeland Global Park and Homeland Park Collection — home">
               <img class="logo__img logo__img--dark" src="assets/media/logo-hgp.png" width="811" height="633" alt="Homeland Global Park, Sector-75, Mohali" decoding="async">
               <img class="logo__img logo__img--light" src="assets/media/logo-hgp-white.png" width="900" height="707" alt="" aria-hidden="true" decoding="async">
+              <span class="logo__divider" aria-hidden="true"></span>
+              <img class="logo__img logo__img--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="Homeland Park Collection" decoding="async">
             </a>
           </header>
           <a href="index.html" class="about-btn link-underline" >Home</a>
-          <a href="enquire.html" class="contact-btn link-underline ">Enquire</a>
         </nav>
 
             <div class="hero-section">
@@ -102,8 +110,8 @@
               <div class="hero-bottom">
                 <div class="hero-content">
                   <h1 class="sr-only">One BHK + Deck</h1>
+                  <span class="hero-eyebrow caps-label" data-hero-eyebrow>1 BHK · Deck · Powder Room</span>
                   <p class="hero-lead" data-lines>A full residence with its own deck: living, sleeping, an Italian-marble en-suite and a powder room for guests.</p>
-                  <p class="hero-price">1 BHK · Deck · Powder Room</p>
                 </div>
               </div>
             </div>
@@ -118,7 +126,7 @@
       <!-- ============ Floor plan + rooms ============ -->
       <section class="cat-gallery" id="floor-plans">
         <div class="cat-intro">
-          <span class="cat-intro__eyebrow wide-label" data-fade>Floor Plan · One BHK + Deck</span>
+          <span class="cat-intro__eyebrow caps-label" data-fade>Floor Plan · One BHK + Deck</span>
           <span class="cat-intro__line" aria-hidden="true"></span>
           <h2 class="serif" data-lines>A complete home, deck included.</h2>
           <p data-fade>Living, dining and bedroom each get their own space, the en-suite is finished in Italian marble, and the deck adds a private outdoor room. Click any drawing to see it full size.</p>
@@ -170,6 +178,11 @@
             View all photos
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m4 16 5-5 4 4 3-3 4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
           </button>
+          <!-- Know More opens the residence's presentation once "knowMore" is set in content/residences.json -->
+          <a class="cat-cta__link link-underline link-underline--on cat-gallery__more" href="enquire.html?subject=One%20BHK%20%2B%20Deck">
+            Know More<span class="sr-only"> about One BHK + Deck</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
         </div>
       </section>
 
@@ -203,14 +216,14 @@
         <article class="cat-values__row">
           <figure class="cat-values__figure" data-clip><img src="assets/media/room-12.webp" width="590" height="652" alt="Master bathroom in Italian marble" loading="lazy" decoding="async" data-parallax-figure style="background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAbABgDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIFBAP/xAAmEAABBAECBQUBAAAAAAAAAAABAAIDEQQSIQUTFDFBIjJCUXKR/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAECA//EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwCbw8ZUjixrxsNrVPps6vcz+hR5mM0xOErfpzQdwnmZHFKeS5z2UPVfYrJqOI9THNy5HCqsgISSxaow/mNJPx8oRRGbHz5YwQzTv3toWk8UySKIZX4CmsaLul3PZUk0uY+SQaiNXihSFn0gEGt7QlDf/9k=) center/cover no-repeat"></figure>
           <div class="cat-values__copy cat-values__copy--start">
-            <span class="cat-values__eyebrow wide-label" data-fade>01 · En-suite</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>01 · En-suite</span>
             <h3 class="cat-values__stat" data-lines>Italian Marble En-Suite</h3>
             <p class="cat-values__desc" data-fade>Book-matched marble, a walk-in shower and twin vanities make the master bathroom a room in its own right.</p>
           </div>
         </article>
         <article class="cat-values__row cat-values__row--reverse">
           <div class="cat-values__copy cat-values__copy--center">
-            <span class="cat-values__eyebrow wide-label" data-fade>02 · Guests</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>02 · Guests</span>
             <h3 class="cat-values__stat" data-lines>Designer Powder Room</h3>
             <p class="cat-values__desc" data-fade>A second bathroom off the living area, so guests never cross the bedroom.</p>
           </div>
@@ -219,7 +232,7 @@
         <article class="cat-values__row">
           <figure class="cat-values__figure" data-clip><img src="assets/media/room-11.webp" width="613" height="641" alt="One BHK bedroom opening onto the deck" loading="lazy" decoding="async" data-parallax-figure style="background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAZABgDASIAAhEBAxEB/8QAGgAAAgIDAAAAAAAAAAAAAAAAAAQBBQIDBv/EACMQAAEEAgEDBQAAAAAAAAAAAAEAAgMRBDFhBRIhIkFRcZH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQP/xAAXEQEBAQEAAAAAAAAAAAAAAAAAAREx/9oADAMBAAIRAxEAPwBZoyy6r8/Saigy3ar8WWRlRRSD3dfilYY+UztjHa718aWca1Xy4+ZHGXFzaHCFYdQkZDA5tgXoWhEc4Z3Yk47WNefkhPQdZLrDowCONpGTa3RaScW9PSytzoqLCDyEKYtISzSXH//Z) center/cover no-repeat"></figure>
           <div class="cat-values__copy cat-values__copy--end">
-            <span class="cat-values__eyebrow wide-label" data-fade>03 · Outdoors</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>03 · Outdoors</span>
             <h3 class="cat-values__stat" data-lines>Spacious Deck</h3>
             <p class="cat-values__desc" data-fade>A private deck off the living room, large enough to dine outside and still keep a corner for a lounger.</p>
           </div>
@@ -233,7 +246,7 @@
       <!-- ============ CTA ============ -->
       <section class="cat-cta" id="enquire">
         <div class="cat-cta__inner">
-          <span class="cat-intro__eyebrow wide-label" data-fade>Homeland Global Park</span>
+          <span class="cat-intro__eyebrow caps-label" data-fade>Homeland Global Park</span>
           <span class="cat-cta__line" aria-hidden="true" data-line></span>
           <h2 class="serif" data-lines>Bring the Outdoors Home.</h2>
           <p class="cat-cta__sub" data-fade>The largest residence in the collection, with the full suite of serviced living built in.</p>
@@ -260,10 +273,6 @@
       </section>
 
       <footer class="site-foot" id="footer">
-        <div class="site-foot__brand">
-          <img class="site-foot__logo" src="assets/media/logo-hgp.png" width="811" height="633" alt="Homeland Global Park" loading="lazy" decoding="async">
-          <img class="site-foot__logo site-foot__logo--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="Homeland Park Collection" loading="lazy" decoding="async">
-        </div>
         <div class="site-foot__meta">
           <span data-copyright>Homeland Global Park. All rights reserved.</span>
           <nav class="site-foot__links" aria-label="Legal">
@@ -286,9 +295,6 @@
       <span>Our Residences</span>
       <svg viewBox="0 0 13 13" aria-hidden="true"><rect width="4" height="4" fill="currentColor"/><rect x="9" width="4" height="4" fill="currentColor"/><rect y="9" width="4" height="4" fill="currentColor"/><rect x="9" y="9" width="4" height="4" fill="currentColor"/></svg>
     </a>
-    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
-      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
-    </button>
   </div>
 
   <div id="nav-menu" aria-hidden="true">
@@ -348,8 +354,8 @@
   <script src="js/vendor/CustomEase.min.js"></script>
   <script src="js/vendor/ScrollTrigger.min.js"></script>
   <script src="js/vendor/lenis.min.js"></script>
-  <script src="js/app.js?v=mu1wnzmr"></script>
-  <script src="js/sections.js?v=mu1wnzmr"></script>
+  <script src="js/app.js?v=muxz9fzm"></script>
+  <script src="js/sections.js?v=muxz9fzm"></script>
 
 </body>
 </html>

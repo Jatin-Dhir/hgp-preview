@@ -192,15 +192,15 @@
     const tl = gsap.timeline({ paused: true, delay });
     const visual = $('.hero-visual');
     const img = heroMedia();
-    const h1 = $('.hero-content [data-lines]') || $('.hero-content h1');
+    const lines = $$('.hero-content [data-lines]'); // headline, then the line under it
     const price = $('.hero-price');
-    const marquee = $('.marquee-reveal');
-    const chrome = ['.logo', '.about-btn', '.contact-btn'].map((s) => $(s)).filter(Boolean);
+    const marquee = $('.hero-section .marquee-reveal');
+    const chrome = ['.logo', '.about-btn', '.site-menu'].map((s) => $(s)).filter(Boolean);
     const footer = ['[data-hero-eyebrow]', '.site-footer [data-copyright]', '.scroll-hint'].map((s) => $(s)).filter(Boolean);
     const actions = $('.site-actions');
 
     // prime hidden states before revealing the layer
-    if (h1) hideLines(h1);
+    lines.forEach(hideLines);
     // on the residence pages sections.js lays the photo out full-bleed and parks it at a base scale (see initHeroGrow)
     const base = parseFloat((img && img.dataset && img.dataset.baseScale) || '1') || 1;
     if (withVisual && visual) {
@@ -223,7 +223,7 @@
     }
     if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.35);
     tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.45);
-    if (h1) tl.add(revealLines(h1), 0.6);
+    lines.forEach((el, i) => tl.add(revealLines(el), 0.6 + i * 0.12));
     if (price) {
       tl.to(price, { autoAlpha: 1, duration: 0.35, ease: 'power1.out' }, 1.0)
         .to(price, { '--bt': 1, duration: 0.35, ease: 'power1.inOut' }, 1.05)
@@ -242,7 +242,7 @@
   function contactIntro({ delay = 0 } = {}) {
     const tl = gsap.timeline({ paused: true, delay });
     const marquee = $('.marquee-reveal');
-    const chrome = ['.logo', '.about-btn', '.contact-btn'].map((s) => $(s)).filter(Boolean);
+    const chrome = ['.logo', '.about-btn', '.site-menu'].map((s) => $(s)).filter(Boolean);
     const heading = $('.contact-hero__heading');
     const channels = $$('.contact-hero__channel');
     const tabs = $('.contact-form-tabs');
@@ -274,7 +274,7 @@
   function showEverythingInstantly() {
     document.body.classList.add('is-ready', 'preloader-done');
     document.documentElement.classList.remove('preloading');
-    $$('.hero-visual, .marquee-reveal, .logo, .about-btn, .contact-btn, .hero-content, [data-copyright], .scroll-hint, .site-actions, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div').forEach((el) => {
+    $$('.hero-visual, .marquee-reveal, .logo, .about-btn, .site-menu, .hero-content, [data-copyright], .scroll-hint, .site-actions, .contact-hero__heading, .contact-hero__channel, .contact-form-tabs, .contact-page-form > div').forEach((el) => {
       el.style.visibility = 'visible';
       el.style.opacity = '';
       el.style.clipPath = 'none';
@@ -328,13 +328,13 @@
     gsap.set(frames, { scale: 0.06, autoAlpha: 0, transformOrigin: 'center center' });
     gsap.set(imgs, { scale: 1 });
     const brand = $$('.site-preloader__logo, .site-preloader__caption', pre);
-    // put the loader logo exactly where the page logo will appear, so the brand does not move during the hand-off
-    const loaderLogo = $('.site-preloader__logo', pre);
-    const pageLogo = $('.logo__img--dark');
-    if (loaderLogo && pageLogo) {
-      const lr = pageLogo.getBoundingClientRect();
-      if (lr.height) gsap.set(loaderLogo, { top: lr.top, left: lr.left, height: lr.height, x: 0, xPercent: 0, transform: 'none' });
-    }
+    // put each loader logo exactly where its page logo will appear, so the brand does not move during the hand-off
+    const loaderLogos = $$('.site-preloader__logo', pre);
+    const pageLogos = $$('.logo .logo__img--dark, .logo .logo__img--partner');
+    loaderLogos.forEach((logo, i) => {
+      const lr = pageLogos[i] && pageLogos[i].getBoundingClientRect();
+      if (lr && lr.height) gsap.set(logo, { top: lr.top, left: lr.left, height: lr.height, x: 0, xPercent: 0, transform: 'none' });
+    });
     gsap.fromTo(brand, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08, delay: 0.15 });
     tick(0, false);
     gsap.set(wrapper, { yPercent: 100 });
@@ -363,9 +363,9 @@
     exit.to(wrapper, { yPercent: -110, duration: 0.5, ease: 'power2.inOut' }, 0);
     exit.to($$('.site-preloader__caption', pre), { autoAlpha: 0, y: -6, duration: 0.35, ease: 'power2.out' }, 0);
     // the white loader logo hands over to the page logo in the same spot as the wipe passes
-    exit.to($('.site-preloader__logo', pre), { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }, 0.55);
+    exit.to($$('.site-preloader__logo', pre), { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }, 0.55);
     exit.to(bg, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.0, ease: EASE_WIPE }, 0.2);
-    // travel by transform only (both rects are squares): compositor-driven, no layout during the hand-off
+    // travel by transform only (both rects share the film's aspect ratio): compositor-driven, no layout during the hand-off
     exit.to(box, {
       x: to.left - from.left,
       y: to.top - from.top,
@@ -403,7 +403,7 @@
     const btn = $('.site-actions [data-open-selection]') || triggers[0];
     const menu = $('#selection-menu');
     const stage = $('#page-stage');
-    const actions = $('.site-actions');
+    const actions = $$('.site-actions, .site-menu');
     const cards = $$('.selection-card', menu);
     if (!btn || !menu || !stage) return;
     let open = false;
@@ -451,16 +451,19 @@
       document.body.classList.add('selection-open');
       menu.setAttribute('aria-hidden', 'false');
       btn.setAttribute('aria-expanded', 'true');
+      // everything moves with the scroll: the page lifts away to the top, the residences rise from the bottom
       if (!hasGsap || reduceMotion) {
-        gsap && gsap.set(stage, { scale: pageScale(), yPercent: 50 });
+        gsap && gsap.set(stage, { scale: pageScale(), yPercent: -50 });
+        gsap && gsap.set(actions, { autoAlpha: 0 }); // it would sit on top of the last card
         busy = false;
         cards[0] && cards[0].focus();
         return;
       }
       gsap.timeline({ onComplete: () => { busy = false; cards[0] && cards[0].focus(); } })
-        .to(stage, { scale: pageScale(), yPercent: 50, duration: 1.0, ease: 'expo.inOut' }, 0)
-        .to(actions, { autoAlpha: 0, duration: 0.3 }, 0)
-        .fromTo(cards, { yPercent: -125 }, { yPercent: 0, duration: 1.0, ease: 'expo.out', stagger: 0.07 }, 0.25);
+        .to(stage, { scale: pageScale(), yPercent: -50, duration: 1.0, ease: 'expo.inOut' }, 0)
+        // overwrite: a still-running intro fade-in must not bring the buttons back over the cards
+        .to(actions, { autoAlpha: 0, duration: 0.3, overwrite: 'auto' }, 0)
+        .fromTo(cards, { yPercent: 125 }, { yPercent: 0, duration: 1.0, ease: 'expo.out', stagger: 0.07 }, 0.25);
     };
 
     const closeMenu = () => {
@@ -475,9 +478,9 @@
         emit('close-end');
         btn.focus();
       };
-      if (!hasGsap || reduceMotion) { done(); return; }
+      if (!hasGsap || reduceMotion) { gsap && gsap.set(actions, { autoAlpha: 1 }); done(); return; }
       gsap.timeline({ onComplete: done })
-        .to(cards, { yPercent: -125, duration: 0.7, ease: 'power3.inOut', stagger: { each: 0.05, from: 'end' } }, 0)
+        .to(cards, { yPercent: 125, duration: 0.7, ease: 'power3.inOut', stagger: { each: 0.05, from: 'end' } }, 0)
         .to(stage, { scale: 1, yPercent: 0, duration: 0.9, ease: 'expo.inOut' }, 0.12)
         .to(actions, { autoAlpha: 1, duration: 0.35 }, 0.7);
     };
@@ -504,11 +507,11 @@
         busy = true;
         const href = card.getAttribute('href');
         const others = cards.filter((c) => c !== card);
-        // the other cards jump off and the page fades; then the chosen card's cover morphs into the next hero
+        // the other cards sink back the way they came and the page fades; then the chosen card's cover morphs into the next hero
         const ready = warmNextHero($('.selection-card__cover img', card));
         const exit = new Promise((resolve) => {
           gsap.timeline({ onComplete: resolve })
-            .to(others, { autoAlpha: 0, yPercent: -12, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 0)
+            .to(others, { autoAlpha: 0, yPercent: 12, duration: 0.4, ease: 'power2.out', stagger: 0.05 }, 0)
             .to(stage, { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
             .to(card, { scale: 1.03, duration: 0.6, ease: 'power2.inOut' }, 0);
         });
@@ -546,7 +549,7 @@
       }
       gsap.timeline({ onComplete: () => { busy = false; items[0] && items[0].focus(); } })
         .to(overlay, { opacity: 1, duration: 0.4 }, 0)
-        .fromTo(panel, { clipPath: 'inset(100% 0% 0% 100%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'expo.inOut' }, 0)
+        .fromTo(panel, { clipPath: 'inset(0% 0% 100% 100%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.6, ease: 'expo.inOut' }, 0)
         .fromTo(items, { y: 20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55, stagger: 0.05, ease: 'power3.out' }, 0.22);
     };
 
@@ -568,7 +571,7 @@
       }
       gsap.timeline({ onComplete: done })
         .to(items, { y: 10, autoAlpha: 0, duration: 0.25, stagger: { each: 0.02, from: 'end' }, ease: 'power2.out' }, 0)
-        .to(panel, { clipPath: 'inset(100% 0% 0% 100%)', duration: 0.5, ease: 'expo.inOut' }, 0.05)
+        .to(panel, { clipPath: 'inset(0% 0% 100% 100%)', duration: 0.5, ease: 'expo.inOut' }, 0.05)
         .to(overlay, { opacity: 0, duration: 0.35 }, 0.15);
     };
 
@@ -883,17 +886,17 @@
         const ready = warmNextHero($('.cat-next__parallax img', next));
         const exit = new Promise((resolve) => gsap.timeline({ onComplete: resolve })
           .to($$('#page-stage main > *:not(.cat-next)'), { autoAlpha: 0, duration: 0.35, ease: 'power2.out' }, 0)
-          .to('.site-actions', { autoAlpha: 0, duration: 0.3 }, 0)
+          .to('.site-actions, .site-menu', { autoAlpha: 0, duration: 0.3 }, 0)
           .to($('.cat-next__body', next), { autoAlpha: 0, y: -16, duration: 0.3, ease: 'power2.out' }, 0));
         Promise.all([exit, ready]).then(() => navigateWithMorph(href, { visual: $('.cat-next__viewport', next), bg: next }));
         return;
       }
-      gsap.to('#page-stage, .site-actions', { autoAlpha: 0, duration: 0.35, ease: 'power2.out', onComplete: () => navigateWithMorph(href) });
+      gsap.to('#page-stage, .site-actions, .site-menu', { autoAlpha: 0, duration: 0.35, ease: 'power2.out', onComplete: () => navigateWithMorph(href) });
     });
     window.addEventListener('pageshow', (e) => {
       if (e.persisted) {
         document.body.classList.remove('is-leaving');
-        gsap.set('#page-stage, .site-actions', { clearProps: 'opacity,visibility' });
+        gsap.set('#page-stage, .site-actions, .site-menu', { clearProps: 'opacity,visibility' });
       }
     });
   }

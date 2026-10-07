@@ -20,9 +20,9 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Archivo:wdth,wght@125,500&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mu1wnzmr">
-  <link rel="stylesheet" href="css/sections.css?v=mu1wnzmr">
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=muxz9fzm">
+  <link rel="stylesheet" href="css/sections.css?v=muxz9fzm">
 
 </head>
 <body class="category" data-category="one-bed" style="--cat: #4a3a31; --cat-muted: #75655b;">
@@ -64,6 +64,13 @@
     </div>
   </nav>
 
+  <!-- the menu button sits top right, level with the logo; it is fixed so it stays reachable on long pages -->
+  <div class="site-menu">
+    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
+    </button>
+  </div>
+
 
   <div id="page-stage">
     <main>
@@ -74,13 +81,14 @@
           <div class="page-grid">
         <nav class="site-nav" aria-label="Primary">
           <header class="logo">
-            <a href="index.html" aria-label="Homeland Global Park — home">
+            <a href="index.html" aria-label="Homeland Global Park and Homeland Park Collection — home">
               <img class="logo__img logo__img--dark" src="assets/media/logo-hgp.png" width="811" height="633" alt="Homeland Global Park, Sector-75, Mohali" decoding="async">
               <img class="logo__img logo__img--light" src="assets/media/logo-hgp-white.png" width="900" height="707" alt="" aria-hidden="true" decoding="async">
+              <span class="logo__divider" aria-hidden="true"></span>
+              <img class="logo__img logo__img--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="Homeland Park Collection" decoding="async">
             </a>
           </header>
           <a href="index.html" class="about-btn link-underline" >Home</a>
-          <a href="enquire.html" class="contact-btn link-underline ">Enquire</a>
         </nav>
 
             <div class="hero-section">
@@ -102,8 +110,8 @@
               <div class="hero-bottom">
                 <div class="hero-content">
                   <h1 class="sr-only">One Bed Suite</h1>
+                  <span class="hero-eyebrow caps-label" data-hero-eyebrow>1 Bedroom · Lounge · Balcony</span>
                   <p class="hero-lead" data-lines>A separate bedroom, a lounge to receive people in, and a walk-in dressing zone that opens onto the balcony.</p>
-                  <p class="hero-price">1 Bedroom · Lounge · Balcony</p>
                 </div>
               </div>
             </div>
@@ -118,7 +126,7 @@
       <!-- ============ Floor plan + rooms ============ -->
       <section class="cat-gallery" id="floor-plans">
         <div class="cat-intro">
-          <span class="cat-intro__eyebrow wide-label" data-fade>Floor Plan · One Bed Suite</span>
+          <span class="cat-intro__eyebrow caps-label" data-fade>Floor Plan · One Bed Suite</span>
           <span class="cat-intro__line" aria-hidden="true"></span>
           <h2 class="serif" data-lines>Room to live. Room to rest.</h2>
           <p data-fade>The bedroom and lounge are separate rooms, joined by a walk-in dressing zone, with the balcony extended along the living side. Click any drawing to see it full size.</p>
@@ -170,6 +178,11 @@
             View all photos
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m4 16 5-5 4 4 3-3 4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
           </button>
+          <!-- Know More opens the residence's presentation once "knowMore" is set in content/residences.json -->
+          <a class="cat-cta__link link-underline link-underline--on cat-gallery__more" href="enquire.html?subject=One%20Bed%20Suite">
+            Know More<span class="sr-only"> about One Bed Suite</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </a>
         </div>
       </section>
 
@@ -203,14 +216,14 @@
         <article class="cat-values__row">
           <figure class="cat-values__figure" data-clip><img src="assets/media/room-32.webp" width="604" height="567" alt="Bedroom lounge with dressing zone" loading="lazy" decoding="async" data-parallax-figure style="background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAXABgDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAQCAwX/xAAfEAACAwEAAgMBAAAAAAAAAAABAgADEQQhMRITUXH/xAAXAQADAQAAAAAAAAAAAAAAAAAAAQID/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhEDEQA/APPPZclhTQR59weywHC2fycupHSxiVOjZvn6EqI+xFIwaWGzKNap4+lUVnbT5A9bEzXYlruEfCSCuDPUQCyxh8i3pZL2W1CgM1QYg5pERKSiruRXDc/hvxh4iIiN/9k=) center/cover no-repeat"></figure>
           <div class="cat-values__copy cat-values__copy--start">
-            <span class="cat-values__eyebrow wide-label" data-fade>01 · Dressing</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>01 · Dressing</span>
             <h3 class="cat-values__stat" data-lines>Walk-in Dressing Zone</h3>
             <p class="cat-values__desc" data-fade>A proper dressing room between bedroom and bath, lit and fitted, so the bedroom stays a bedroom.</p>
           </div>
         </article>
         <article class="cat-values__row cat-values__row--reverse">
           <div class="cat-values__copy cat-values__copy--center">
-            <span class="cat-values__eyebrow wide-label" data-fade>02 · Bath</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>02 · Bath</span>
             <h3 class="cat-values__stat" data-lines>Stone Soaking Tub</h3>
             <p class="cat-values__desc" data-fade>A deep stone tub and a separate shower, finished in marble with warm, layered lighting.</p>
           </div>
@@ -219,7 +232,7 @@
         <article class="cat-values__row">
           <figure class="cat-values__figure" data-clip><img src="assets/media/room-31.webp" width="610" height="560" alt="Suite bedroom with balcony" loading="lazy" decoding="async" data-parallax-figure style="background:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABQODxIPDRQSEBIXFRQYHjIhHhwcHj0sLiQySUBMS0dARkVQWnNiUFVtVkVGZIhlbXd7gYKBTmCNl4x9lnN+gXz/2wBDARUXFx4aHjshITt8U0ZTfHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHz/wAARCAAWABgDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAHxAAAgMAAwADAQAAAAAAAAAAAQIAAxEEEiETQVFi/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAECA//EABYRAQEBAAAAAAAAAAAAAAAAAAABIf/aAAwDAQACEQMRAD8AWWXJT3DL7/MxtyuWK1cqoDH8myzXpVQQdIkLaQa2X5vE+vZlrRNuVaihnwgjcAyJKx1soUjwqMyIBu0cejsBuTIecWrWzrgbzIiMkldfmbtWre/cREmqj//Z) center/cover no-repeat"></figure>
           <div class="cat-values__copy cat-values__copy--end">
-            <span class="cat-values__eyebrow wide-label" data-fade>03 · Outdoors</span>
+            <span class="cat-values__eyebrow caps-label" data-fade>03 · Outdoors</span>
             <h3 class="cat-values__stat" data-lines>Balcony Extended</h3>
             <p class="cat-values__desc" data-fade>The balcony runs the width of the living side, wide enough for a table and two chairs in the evening air.</p>
           </div>
@@ -233,7 +246,7 @@
       <!-- ============ CTA ============ -->
       <section class="cat-cta" id="enquire">
         <div class="cat-cta__inner">
-          <span class="cat-intro__eyebrow wide-label" data-fade>Homeland Global Park</span>
+          <span class="cat-intro__eyebrow caps-label" data-fade>Homeland Global Park</span>
           <span class="cat-cta__line" aria-hidden="true" data-line></span>
           <h2 class="serif" data-lines>Make the Suite Yours.</h2>
           <p class="cat-cta__sub" data-fade>A private, serviced home in Mohali, or a fully managed asset with assured rental.</p>
@@ -260,10 +273,6 @@
       </section>
 
       <footer class="site-foot" id="footer">
-        <div class="site-foot__brand">
-          <img class="site-foot__logo" src="assets/media/logo-hgp.png" width="811" height="633" alt="Homeland Global Park" loading="lazy" decoding="async">
-          <img class="site-foot__logo site-foot__logo--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="Homeland Park Collection" loading="lazy" decoding="async">
-        </div>
         <div class="site-foot__meta">
           <span data-copyright>Homeland Global Park. All rights reserved.</span>
           <nav class="site-foot__links" aria-label="Legal">
@@ -286,9 +295,6 @@
       <span>Our Residences</span>
       <svg viewBox="0 0 13 13" aria-hidden="true"><rect width="4" height="4" fill="currentColor"/><rect x="9" width="4" height="4" fill="currentColor"/><rect y="9" width="4" height="4" fill="currentColor"/><rect x="9" y="9" width="4" height="4" fill="currentColor"/></svg>
     </a>
-    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
-      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
-    </button>
   </div>
 
   <div id="nav-menu" aria-hidden="true">
@@ -348,8 +354,8 @@
   <script src="js/vendor/CustomEase.min.js"></script>
   <script src="js/vendor/ScrollTrigger.min.js"></script>
   <script src="js/vendor/lenis.min.js"></script>
-  <script src="js/app.js?v=mu1wnzmr"></script>
-  <script src="js/sections.js?v=mu1wnzmr"></script>
+  <script src="js/app.js?v=muxz9fzm"></script>
+  <script src="js/sections.js?v=muxz9fzm"></script>
 
 </body>
 </html>

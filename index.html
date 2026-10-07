@@ -20,9 +20,9 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Archivo:wdth,wght@125,500&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=mu1wnzmr">
-  <link rel="stylesheet" href="css/sections.css?v=mu1wnzmr">
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600&family=Fraunces:opsz,wght,SOFT@9..144,300..400,0..100&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=muxz9fzm">
+  <link rel="stylesheet" href="css/sections.css?v=muxz9fzm">
 
 </head>
 <body class="home">
@@ -31,6 +31,7 @@
   <div id="site-preloader" class="site-preloader" aria-hidden="true">
     <div class="site-preloader__bg"></div>
     <img class="site-preloader__logo" src="assets/media/logo-hgp-white.png" width="900" height="707" alt="" decoding="async">
+    <img class="site-preloader__logo site-preloader__logo--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="" decoding="async">
     <span class="site-preloader__caption site-preloader__caption--left">Punjab's First Branded Serviced Residences</span>
     <span class="site-preloader__caption site-preloader__caption--right">Sector-75, Mohali</span>
     <div class="site-preloader__stage">
@@ -89,6 +90,13 @@
     </div>
   </nav>
 
+  <!-- the menu button sits top right, level with the logo; it is fixed so it stays reachable on long pages -->
+  <div class="site-menu">
+    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
+    </button>
+  </div>
+
 
   <!-- ============ Landing page: one screen, scroll reveals the residences ============ -->
   <div id="page-stage">
@@ -96,13 +104,14 @@
       <div class="page-grid">
         <nav class="site-nav" aria-label="Primary">
           <header class="logo">
-            <a href="index.html" aria-label="Homeland Global Park — home">
+            <a href="index.html" aria-label="Homeland Global Park and Homeland Park Collection — home">
               <img class="logo__img logo__img--dark" src="assets/media/logo-hgp.png" width="811" height="633" alt="Homeland Global Park, Sector-75, Mohali" decoding="async">
               <img class="logo__img logo__img--light" src="assets/media/logo-hgp-white.png" width="900" height="707" alt="" aria-hidden="true" decoding="async">
+              <span class="logo__divider" aria-hidden="true"></span>
+              <img class="logo__img logo__img--partner" src="assets/media/logo-hpc.png" width="800" height="534" alt="Homeland Park Collection" decoding="async">
             </a>
           </header>
           <a href="#selection-menu" class="about-btn link-underline" data-open-selection>Residences</a>
-          <a href="enquire.html" class="contact-btn link-underline ">Enquire</a>
         </nav>
 
         <div class="hero-section">
@@ -126,7 +135,7 @@
           </div>
           <div class="hero-bottom">
             <div class="hero-content">
-              <span class="hero-eyebrow wide-label" data-hero-eyebrow>Introducing Punjab's First</span>
+              <span class="hero-eyebrow caps-label" data-hero-eyebrow>Introducing Punjab's First</span>
               <h1 data-lines>Fully furnished. Fully serviced. Designed for effortless living.</h1>
               <a class="hero-price hero-price--link" href="#selection-menu" data-open-selection>Discover Your Residence</a>
             </div>
@@ -144,9 +153,6 @@
       <span>Our Residences</span>
       <svg viewBox="0 0 13 13" aria-hidden="true"><rect width="4" height="4" fill="currentColor"/><rect x="9" width="4" height="4" fill="currentColor"/><rect y="9" width="4" height="4" fill="currentColor"/><rect x="9" y="9" width="4" height="4" fill="currentColor"/></svg>
     </a>
-    <button type="button" class="menu-btn" data-open-menu aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
-      <svg viewBox="0 0 23 12" aria-hidden="true"><rect width="23" height="3" fill="currentColor"/><rect y="9" width="10" height="3" fill="currentColor"/></svg>
-    </button>
   </div>
 
   <div id="nav-menu" aria-hidden="true">
@@ -205,6 +211,6 @@
 
   <script src="js/vendor/gsap.min.js"></script>
   <script src="js/vendor/CustomEase.min.js"></script>
-  <script src="js/app.js?v=mu1wnzmr"></script>
+  <script src="js/app.js?v=muxz9fzm"></script>
 </body>
 </html>
