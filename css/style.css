@@ -63,8 +63,6 @@
   --menu-w: calc(3.76vw * var(--s));
   /* the menu button is level with the centre of the logo row */
   --menu-top: calc(var(--grid-pad) * 0.6 + (var(--logo-h) - var(--action-h)) / 2);
-  /* ...and sits just left of the Homeland Park Collection logo (800 x 534 artwork) */
-  --menu-right: calc(var(--grid-pad) + var(--logo-h) * 1.4981 + var(--logo-gap));
 
   /* selection */
   --card-title: min(calc(2.9vw * var(--s)), 5.2svh);
@@ -273,28 +271,25 @@ img { display: block; max-width: 100%; }
 /* nav row */
 .site-nav { display: contents; }
 
-/* Homeland Global Park opens the row on the left (then Home / Residences); Homeland Park Collection closes it
-   on the right, with the menu button just inside it */
-.site-nav__start {
+.logo {
+  grid-column: 1 / -1;
   grid-row: 1;
-  grid-column: 1 / 7;
-  justify-self: start;
+  justify-self: center;
   align-self: center;
-  display: flex;
-  align-items: center;
-  gap: var(--logo-gap);
+  line-height: 0;
 }
-.logo { display: inline-flex; align-items: center; line-height: 0; }
-.logo--partner {
-  grid-row: 1;
-  grid-column: 7 / -1;
-  justify-self: end;
-  align-self: center;
-}
+/* Homeland Global Park and Homeland Park Collection side by side in the centre, split by a hairline */
+.logo a { display: inline-flex; align-items: center; gap: var(--logo-gap); line-height: 0; }
 .logo__img {
   height: var(--logo-h);
   width: auto;
   max-width: none;
+}
+.logo__divider {
+  width: 1px;
+  height: calc(var(--logo-h) * 0.8);
+  background: currentColor;
+  opacity: 0.25;
 }
 .logo__img--light { display: none; }
 body.category .logo__img--dark { display: none; }
@@ -304,6 +299,10 @@ body.category .logo__img--partner,
 .site-preloader__logo--partner { filter: brightness(0) invert(1); }
 
 .about-btn {
+  grid-row: 1;
+  grid-column: 1 / 4;
+  justify-self: start;
+  align-self: center;
   font-size: calc(var(--small) * 1.1);
   white-space: nowrap;
 }
@@ -589,7 +588,7 @@ html.has-cursor input, html.has-cursor textarea, html.has-cursor select { cursor
 }
 .site-menu {
   top: var(--menu-top);
-  right: var(--menu-right);
+  right: var(--grid-pad);
   line-height: 0;
 }
 /* a faint light edge keeps the button's shape over sections painted in its own colour; it vanishes on paper */
@@ -972,7 +971,7 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
 .nav-menu__panel {
   position: fixed;
   top: var(--menu-top);
-  right: var(--menu-right);
+  right: var(--grid-pad);
   z-index: 1;
   display: flex;
   flex-direction: column;
@@ -1120,7 +1119,7 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
   }
   .nav-menu__links { gap: 0.1em; }
   .nav-menu__links a { font-size: 9.4vw; line-height: 1.15; }
-  .nav-menu__burger { position: absolute; top: var(--menu-top); right: var(--menu-right); bottom: auto; left: auto; width: var(--menu-w); height: var(--action-h); }
+  .nav-menu__burger { position: absolute; top: var(--menu-top); right: var(--grid-pad); bottom: auto; left: auto; width: var(--menu-w); height: var(--action-h); }
   .nav-menu__contact { flex-wrap: wrap; justify-content: flex-start; gap: 0.6em 2em; margin-top: 8vw; }
   .nav-menu__contact a { font-size: 3.9vw; min-height: 44px; }
 }
