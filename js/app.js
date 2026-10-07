@@ -196,8 +196,9 @@
     const price = $('.hero-price');
     const marquee = $('.hero-section .marquee-reveal');
     // after the loader the page logo must not drop in: it takes over from the loader logo in the same spot
-    const logo = logoInPlace ? $('.logo') : null;
-    const chrome = [logoInPlace ? null : '.logo', '.about-btn', '.site-menu'].filter(Boolean).map((s) => $(s)).filter(Boolean);
+    const logos = $$('.logo'); // Homeland Global Park (left) and Homeland Park Collection (right)
+    const logo = logoInPlace ? logos : [];
+    const chrome = [...(logoInPlace ? [] : logos), $('.about-btn'), $('.site-menu')].filter(Boolean);
     const footer = ['[data-hero-eyebrow]', '.site-footer [data-copyright]', '.scroll-hint'].map((s) => $(s)).filter(Boolean);
     const actions = $('.site-actions');
 
@@ -213,7 +214,7 @@
     }
     if (marquee) gsap.set(marquee, { yPercent: 28, autoAlpha: 0 });
     gsap.set(chrome, { y: -10, autoAlpha: 0 });
-    if (logo) gsap.set(logo, { autoAlpha: 0 });
+    if (logo.length) gsap.set(logo, { autoAlpha: 0 });
     gsap.set(footer, { y: 10, autoAlpha: 0 });
     if (actions) gsap.set(actions, { yPercent: 60, autoAlpha: 0 });
     if (price) gsap.set(price, { autoAlpha: 0, '--bt': 0, '--br': 0, '--bb': 0, '--bl': 0 });
@@ -225,7 +226,7 @@
         .to(img, { scale: base, duration: 1.5, ease: 'power4.out' }, 0.2);
     }
     if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.35);
-    if (logo) tl.to(logo, { autoAlpha: 1, duration: 0.35, ease: 'power1.inOut' }, 0);
+    if (logo.length) tl.to(logo, { autoAlpha: 1, duration: 0.35, ease: 'power1.inOut' }, 0);
     tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.45);
     lines.forEach((el, i) => tl.add(revealLines(el), 0.6 + i * 0.12));
     if (price) {
@@ -246,7 +247,7 @@
   function contactIntro({ delay = 0 } = {}) {
     const tl = gsap.timeline({ paused: true, delay });
     const marquee = $('.marquee-reveal');
-    const chrome = ['.logo', '.about-btn', '.site-menu'].map((s) => $(s)).filter(Boolean);
+    const chrome = [...$$('.logo'), $('.about-btn'), $('.site-menu')].filter(Boolean);
     const heading = $('.contact-hero__heading');
     const channels = $$('.contact-hero__channel');
     const tabs = $('.contact-form-tabs');

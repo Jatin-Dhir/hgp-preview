@@ -236,7 +236,7 @@ html.js body:not(.reveals-ready) main [data-clip] { visibility: hidden; }
 .slider__specs { color: var(--cat-muted); text-align: right; font-size: calc(var(--small) * 0.85); }
 .slider__nav {
   position: absolute;
-  right: calc(12.5vw * var(--s));
+  left: calc(12.5vw * var(--s)); /* bottom-right belongs to the fixed Our Residences button */
   bottom: 0;
   z-index: 2;
   display: flex;
@@ -381,14 +381,15 @@ html.js body:not(.reveals-ready) main [data-clip] { visibility: hidden; }
   padding-inline: var(--grid-pad);
 }
 .cat-gallery__foot .cat-cta__link { margin-top: 0; }
-/* residence pages: floor plan | all photos, with Know More directly under View all photos */
+/* residence pages: the three links stack as one column, same size, left edges aligned */
 body.category .cat-gallery__foot {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  justify-content: center;
-  justify-items: start;
+  flex-direction: column;
+  align-items: flex-start;
+  width: fit-content;
+  margin-inline: auto;
+  gap: 0.8em;
 }
-.cat-gallery__more { grid-column: 2; font: inherit; } /* same size as View all photos, its pair */
+body.category .cat-gallery__foot > * { font-size: calc(var(--h5) * 0.82); }
 button.cat-cta__link { padding: 0; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
 .tiles {
   display: grid;
@@ -1117,12 +1118,10 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
     --next-label: 3vw;
   }
   .cat-intro h2, .cat-cta h2, .cat-quote__text { font-size: 10vw; }
-  body.category .cat-gallery__foot { grid-template-columns: auto; }
-  .cat-gallery__more { grid-column: auto; }
   .slider { margin-top: 10vw; padding-bottom: 22vw; }
   .slider__viewport { rotate: -6deg; }
   .slider__item { rotate: 6deg; }
-  .slider__nav { right: var(--grid-pad); gap: 2vw; }
+  .slider__nav { left: auto; right: var(--grid-pad); gap: 2vw; } /* phones: the bar is centred, the right is free */
   .slider__arrow { width: 11vw; height: 11vw; }
   .cat-values__row,
   .cat-values__row--reverse { display: flex; flex-direction: column; gap: 7vw; }
@@ -1203,7 +1202,7 @@ body.legal .site-actions { display: none; }
 @media (pointer: coarse) {
   .link-underline::before { content: ""; position: absolute; inset: -15px -9px; }
   .slider__arrow { width: max(44px, 11vw); height: max(44px, 11vw); }
-  .logo a, .nav-menu__links a, .nav-menu__burger,
+  .logo, .nav-menu__links a, .nav-menu__burger,
   .lightbox__close, .lightbox__nav { min-height: 44px; min-width: 44px; }
   .nav-menu__links a { display: flex; align-items: center; }
 }
