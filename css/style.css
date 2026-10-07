@@ -128,6 +128,8 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scrollbar-width: none; -webkit-text-size-adjust: 100%; }
+/* keyboard focus scrolls controls into view above the fixed Our Residences bar, never under it */
+html { scroll-padding-bottom: calc(var(--action-h) + var(--grid-pad) * 2); }
 html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 
 html, body {
