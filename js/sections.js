@@ -46,102 +46,17 @@
   const vw = () => window.innerWidth;
   const vh = () => window.innerHeight;
 
-  /* ---------- hero grows to full screen ---------- */
-  function initHeroGrow() {
-    const stage = $('.hero-stage');
-    const sticky = $('.hero-sticky');
-    const slot = $('.hero-visual-slot');
-    const visual = $('.hero-visual');
-    const spacer = $('.hero-spacer');
-    if (!stage || !sticky || !slot || !visual || !spacer) return;
-
-    // phones grow over about one screen of swiping (tablets 1.5, desktop 2) so the story starts sooner
-    const mult = () => (vw() <= 650 ? 1.15 : vw() <= 1024 ? 1.5 : 2);
-    const grow = () => (1.1 * vh() + 0.052 * vw()) * mult();
-    const hold = () => 0.05 * vh();
-    const setSpacer = () => { spacer.style.height = `${Math.round(grow() + hold())}px`; };
-    setSpacer();
-    ScrollTrigger.addEventListener('refreshInit', setSpacer);
-
-    // colour theme flips once the white sections arrive (with reduced motion too: it is colour, not motion)
+  /* ---------- hero: the photo covers the screen from the start (no grow); the colours flip at the white sections ---------- */
+  function initHeroTheme() {
     const gallery = $('.cat-gallery') || $('.xp-services');
-    if (gallery) {
-      ScrollTrigger.create({
-        trigger: gallery,
-        start: 'top 65%',
-        onEnter: () => body.classList.add('past-hero'),
-        onLeaveBack: () => body.classList.remove('past-hero'),
-      });
-      // the Our Residences pill sits near the bottom: it turns solid when the white reaches its own line,
-      // otherwise its white outline crosses the white page unseen until the 65% flip
-      const actions = $('.site-actions');
-      if (actions) {
-        ScrollTrigger.create({
-          trigger: gallery,
-          start: () => `top ${Math.round(actions.offsetTop + actions.offsetHeight / 2)}px`,
-          onEnter: () => body.classList.add('actions-light'),
-          onLeaveBack: () => body.classList.remove('actions-light'),
-        });
-      }
-    }
-
-    if (reduce) return;
-
-    const slotRel = () => {
-      const s = slot.getBoundingClientRect();
-      const h = sticky.getBoundingClientRect();
-      return { left: s.left - h.left, top: s.top - h.top, w: s.width, h: s.height };
-    };
-    const shade = $('.hero-visual__shade', visual);
-    const fading = ['.hero-section .marquee', '.hero-content', '.scroll-hint'].map((s) => $(s)).filter(Boolean);
-
-    // GPU path: the photo is laid out once at its final full-bleed size (100vw x 110svh) and only *transformed*
-    // while the box grows, so the browser never re-rasterises the large image on every scroll frame
-    const media = $('.hero-opening-media', visual);
-    const baseScale = () => { const s = slotRel(); return Math.max(s.h / (1.1 * vh()), s.w / vw()); };
-    if (media) {
-      stage.classList.add('hero-stage--gpu');
-      const prime = () => { const k = baseScale(); media.dataset.baseScale = String(k); return k; };
-      gsap.set(media, { x: 0, y: 0, xPercent: -50, yPercent: -50, scale: prime() });
-      ScrollTrigger.addEventListener('refreshInit', prime);
-      // the blurred placeholder moves to the box so the photo stays a clean, directly-composited image (sharp while scaling)
-      if (media.style.background) { visual.style.background = media.style.background; media.style.background = ''; }
-    }
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: stage,
-        start: 'top top',
-        end: () => `+=${grow()}`,
-        scrub: 0.5, // a short catch-up smooths wheel steps and touch momentum alike
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          body.classList.toggle('hero-grown', self.progress > 0.42);
-          // scrolled before the entrance finished: hand the photo to the scroll story at once instead of fighting it
-          if (self.progress > 0.002 && !window.__introDone) {
-            if (media) gsap.killTweensOf(media, 'scale');
-            gsap.killTweensOf(visual, 'clipPath');
-            gsap.set(visual, { clipPath: 'inset(0% 0% 0% 0%)' });
-          }
-        },
-      },
-    })
-      // the box keeps its slot-sized layout and is only translated/scaled: no layout or paint per scroll frame
-      .fromTo(visual,
-        { x: 0, y: 0, scaleX: 1, scaleY: 1, transformOrigin: '0 0' },
-        { x: () => -slotRel().left, y: () => -(0.05 * vh()) - slotRel().top, scaleX: () => vw() / slotRel().w, scaleY: () => (1.1 * vh()) / slotRel().h, ease: 'none', immediateRender: false },
-        0)
-      .to(fading, { autoAlpha: 0, duration: 0.3, ease: 'none' }, 0)
-      .to(shade, { opacity: 1, duration: 0.5, ease: 'none' }, 0.25);
-    if (media) {
-      // the photo counter-scales per axis, so it never distorts and simply zooms from its base scale to 1
-      const sync = () => {
-        const b = baseScale();
-        const k = b + (1 - b) * tl.progress();
-        gsap.set(media, { scaleX: k / gsap.getProperty(visual, 'scaleX'), scaleY: k / gsap.getProperty(visual, 'scaleY') });
-      };
-      tl.eventCallback('onUpdate', sync);
-    }
+    if (!gallery) return;
+    // with reduced motion too: it is colour, not motion
+    ScrollTrigger.create({
+      trigger: gallery,
+      start: 'top 65%',
+      onEnter: () => body.classList.add('past-hero'),
+      onLeaveBack: () => body.classList.remove('past-hero'),
+    });
   }
 
   /* ---------- reveals ---------- */
@@ -415,7 +330,7 @@
   /* ---------- boot ---------- */
   function boot() {
     initAnchors();
-    initHeroGrow();
+    initHeroTheme();
     initParallax();
     $$('[data-slider]').forEach(initSlider);
     initSelectionFreeze();

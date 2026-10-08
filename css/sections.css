@@ -38,7 +38,7 @@ body.category {
 body.category #page-stage,
 body.category main { overflow: visible; background: var(--cat); }
 
-/* ---------- Sticky hero that grows ---------- */
+/* ---------- Residence hero: the photo covers the screen from the start ---------- */
 .hero-stage { position: relative; z-index: 0; width: 100%; }
 .hero-sticky {
   position: sticky;
@@ -52,7 +52,6 @@ body.category main { overflow: visible; background: var(--cat); }
 .hero-stage .page-grid { overflow: visible; }
 .hero-stage .logo,
 .hero-stage .about-btn { position: relative; z-index: 6; transition: color 0.5s ease; }
-.hero-stage .hero-visual-slot { z-index: 5; }
 .hero-stage .hero-visual {
   position: absolute;
   left: 0; top: 0;
@@ -60,57 +59,30 @@ body.category main { overflow: visible; background: var(--cat); }
   transform-origin: 0 0;
   will-change: transform;
 }
-/* GPU path (class added by sections.js): the photo keeps its final full-bleed size and is only transformed while the box grows */
-.hero-stage--gpu .hero-visual .hero-opening-media {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 100vw;
-  height: 110svh;
-  max-width: none;
-  transform: translate(-50%, -50%);
-  will-change: transform;
-}
 body.category .hero-sticky { background: var(--cat); }
 
-/* home: chrome turns white while the grown photo covers the screen */
-body.home.hero-grown .logo,
-body.home.hero-grown .about-btn { color: #fff; }
-body.home.hero-grown .site-actions,
-body.home.hero-grown .site-menu {
-  --btn-fill: #fff;
-  --btn-text-hover: var(--navy);
-  --btn-bg: transparent;
-}
-body.home.past-hero .site-actions,
-body.home.past-hero .site-menu {
-  --btn-fill: var(--navy);
-  --btn-text-hover: #fff;
-  --btn-bg: transparent;
-}
+/* full-screen hero: a soft darkening keeps the white header, title and words readable on any frame */
 .hero-visual__shade {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0) 42%);
-  opacity: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 30%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 45%),
+    rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
 body.category .hero-content { z-index: 1; }
 
-/* fixed actions flip when the white sections take over */
-body.category .site-actions,
+/* fixed actions: the menu square is white over the photo and flips once the white sections take over; the
+   Our Residences pill is solid throughout (the full-screen photo, then the white sections, pass behind it) */
 body.category .site-menu {
   --btn-fill: #fff;
   --btn-text-hover: var(--cat);
   --btn-bg: transparent;
 }
-/* the pill's transparent outline only reads on the flat hero colour: it turns solid once the grown photo or the
-   white sections are behind it (actions-light is measured at the pill's own line in sections.js) */
-body.category.past-hero .site-actions,
-body.category.past-hero .site-menu,
-body.category.hero-grown .site-actions,
-body.category.actions-light .site-actions {
+body.category .site-actions,
+body.category.past-hero .site-menu {
   --btn-fill: var(--cat);
   --btn-text-hover: #fff;
   --btn-bg: #fff;
@@ -898,12 +870,15 @@ body.experience #page-stage, body.experience main { overflow: visible; backgroun
    pass behind it here, and a transparent pill lets them through its label (the menu button is already solid) */
 body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp-accent); --btn-text-hover: #fff; --btn-bg: #fff; }
 
-/* hero: a text block over sand, then a wide picture that clips in */
-.xp-hero { position: relative; background: var(--sand); }
+/* hero: the wide photo covers the whole screen and the words sit over it in white */
+.xp-hero { position: relative; isolation: isolate; color: #fff; background: var(--navy); }
+.xp-hero .logo__img--dark { display: none; }
+.xp-hero .logo__img--light { display: block; }
+.xp-hero .logo__img--partner { filter: brightness(0) invert(1); }
 .xp-hero__grid {
   height: auto;
   max-height: none;
-  min-height: 78svh;
+  min-height: 100svh;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: visible;
 }
@@ -915,12 +890,12 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-block: calc(6vw * var(--s)) calc(4vw * var(--s));
+  padding-block: calc(2.5vw * var(--s)) calc(2vw * var(--s)); /* the hero is one screen: the photo fills it */
 }
-.xp-hero__body .hero-eyebrow { margin-bottom: calc(2.2vw * var(--s)); color: var(--xp-accent); }
+.xp-hero__body .hero-eyebrow { margin-bottom: calc(2.2vw * var(--s)); color: rgba(255, 255, 255, 0.8); }
 .xp-hero__title {
   max-width: calc(58vw * var(--s));
-  font-size: min(calc(7.2vw * var(--s)), 14svh);
+  font-size: min(calc(7.2vw * var(--s)), 11svh);
   line-height: 0.96;
   letter-spacing: -0.025em;
   text-wrap: balance;
@@ -930,20 +905,30 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   margin-top: calc(2.4vw * var(--s));
   font-size: var(--h5);
   line-height: 1.35;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.86);
   text-wrap: pretty;
 }
 .xp-hero__meta { margin-top: calc(1vw * var(--s)); }
 .xp-hero__meta .hero-price { margin-top: 1em; }
 .xp-hero__figure {
-  width: calc(100% - var(--grid-pad) * 2);
-  margin: 0 auto;
-  aspect-ratio: 21 / 9;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  margin: 0;
   overflow: hidden;
-  transform: translateY(calc(3vw * var(--s)));
   background: var(--sand-deep);
 }
-.xp-hero__figure img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.xp-hero__figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 30%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0) 45%),
+    rgba(0, 0, 0, 0.28);
+  pointer-events: none;
+}
+.xp-hero__figure img { width: 100%; height: 100%; object-fit: cover; }
 
 .xp-section-head {
   display: flex;
@@ -1074,15 +1059,14 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   .xp-facts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: calc(4vw * var(--s)); }
   .xp-partners .logo-lockup { grid-column: 1 / -1; }
   .xp-partners__body { grid-column: 1 / -1; }
-  .xp-hero__title { font-size: min(9vw, 14svh); }
+  .xp-hero__title { font-size: min(9vw, 11svh); }
   .xp-hero__lead { max-width: 60vw; }
 }
 @media (max-width: 650px) and (orientation: portrait) {
-  .xp-hero__grid { min-height: 0; }
+  .xp-hero__grid { min-height: 100svh; } /* the photo behind it fills the screen on phones too */
   .xp-hero__body { grid-column: 1 / -1; padding-top: 12vw; }
   .xp-hero__title { max-width: 92vw; font-size: 12vw; }
   .xp-hero__lead { max-width: 88vw; font-size: 4.6vw; }
-  .xp-hero__figure { aspect-ratio: 4 / 5; } /* portrait crop on phones */
   .xp-section-head h2 { max-width: 92vw; font-size: 10vw; }
   .xp-index__row { grid-template-columns: 1fr; gap: 4vw; }
   .xp-index__media { aspect-ratio: 16 / 10; }

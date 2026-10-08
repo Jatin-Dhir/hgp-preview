@@ -200,7 +200,6 @@
   function heroIntro({ withVisual = true, delay = 0, logoInPlace = false } = {}) {
     const tl = gsap.timeline({ paused: true, delay });
     const visual = $('.hero-visual');
-    const img = heroMedia();
     const lines = $$('.hero-content [data-lines]'); // headline, then the line under it
     const price = $('.hero-price');
     const marquee = $('.hero-section .marquee-reveal');
@@ -213,11 +212,9 @@
 
     // prime hidden states before revealing the layer
     lines.forEach(hideLines);
-    // on the residence pages sections.js lays the photo out full-bleed and parks it at a base scale (see initHeroGrow)
-    const base = parseFloat((img && img.dataset && img.dataset.baseScale) || '1') || 1;
+    // the hero photo covers the screen from the first frame: it only fades in (no zoom)
     if (withVisual && visual) {
-      gsap.set(visual, { clipPath: 'inset(50% 50% 50% 50%)', visibility: 'visible' });
-      gsap.set(img, { scale: 1.5 * base });
+      gsap.set(visual, { autoAlpha: 0 });
     } else if (visual) {
       gsap.set(visual, { visibility: 'visible' });
     }
@@ -230,10 +227,7 @@
 
     document.body.classList.add('is-ready');
 
-    if (withVisual && visual) {
-      tl.to(visual, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'power4.out' }, 0.2)
-        .to(img, { scale: base, duration: 1.5, ease: 'power4.out' }, 0.2);
-    }
+    if (withVisual && visual) tl.to(visual, { autoAlpha: 1, duration: 0.8, ease: 'power2.out' }, 0.1);
     if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.35);
     if (logo.length) tl.to(logo, { autoAlpha: 1, duration: 0.35, ease: 'power1.inOut' }, 0);
     tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.45);
@@ -344,7 +338,7 @@
     const brand = $$('.site-preloader__logo, .site-preloader__caption', pre);
     // put each loader logo exactly where its page logo will appear, so the brand does not move during the hand-off
     const loaderLogos = $$('.site-preloader__logo', pre);
-    const pageLogos = $$('.logo .logo__img--dark, .logo .logo__img--partner');
+    const pageLogos = $$('.logo img').filter((i) => getComputedStyle(i).display !== 'none'); // the variants on show
     loaderLogos.forEach((logo, i) => {
       const lr = pageLogos[i] && pageLogos[i].getBoundingClientRect();
       if (lr && lr.height) gsap.set(logo, { top: lr.top, left: lr.left, height: lr.height, x: 0, xPercent: 0, transform: 'none' });
@@ -381,11 +375,13 @@
     // the white loader logo hands over to the page logo in the same spot as the wipe passes
     exit.to($$('.site-preloader__logo', pre), { autoAlpha: 0, duration: 0.35, ease: 'power1.inOut' }, 0.7);
     exit.to(bg, { clipPath: 'inset(0% 0% 100% 0%)', duration: 1.0, ease: EASE_WIPE }, 0.2);
-    // travel by transform only (both rects share the film's aspect ratio): compositor-driven, no layout during the hand-off
+    // travel by transform only: one uniform scale grows the frame until it covers the screen-filling hero film
+    // (same aspect ratio as the film, so the crop matches at the hand-off); compositor-driven, no layout
+    const k = Math.max(to.width / from.width, to.height / from.height);
     exit.to(box, {
-      x: to.left - from.left,
-      y: to.top - from.top,
-      scale: to.width / from.width,
+      x: to.left - from.left + (to.width - from.width * k) / 2,
+      y: to.top - from.top + (to.height - from.height * k) / 2,
+      scale: k,
       transformOrigin: '0 0',
       duration: 0.9,
       ease: 'power2.inOut',

@@ -292,9 +292,12 @@ img { display: block; max-width: 100%; }
   opacity: 0.25;
 }
 .logo__img--light { display: none; }
+body.home .logo__img--dark,
 body.category .logo__img--dark { display: none; }
+body.home .logo__img--light,
 body.category .logo__img--light { display: block; }
 /* the red Homeland Park Collection logo turns white on the dark residence heroes and the loader */
+body.home .logo__img--partner,
 body.category .logo__img--partner,
 .site-preloader__logo--partner { filter: brightness(0) invert(1); }
 
@@ -311,36 +314,33 @@ body.category .logo__img--partner,
 .hero-section {
   grid-column: 1 / -1;
   grid-row: 2;
-  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   align-self: stretch;
-  gap: calc(var(--grid-gap) * 0.9); /* the film (with the scrolling title behind it), then the words under it */
+  gap: calc(var(--grid-gap) * 0.9); /* the scrolling title, then the words under it */
   min-height: 0;
   overflow: visible;
 }
 
-/* the film is the part that gives way when the row is short (its height shrinks, the ratio holds),
-   so the words under it always fit */
+/* the scrolling title takes the free height in the middle of the screen */
 .hero-top {
-  position: relative;
   display: grid;
   grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   justify-items: center;
   align-items: center;
-  flex: 0 1 calc(var(--visual-w) / var(--visual-ar));
+  flex: 1 1 auto;
   width: 100%;
   min-height: 0;
 }
 
+/* the hero film / photo covers the whole screen behind the header, the title and the words (z-index -1: under
+   everything in the page, above the page's own background; the hero section and row stay unpositioned for this) */
 .hero-visual-slot {
-  grid-area: 1 / 1;
-  height: 100%;
-  aspect-ratio: var(--visual-ar);
-  position: relative;
-  z-index: 5;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
 }
 
 .hero-visual {
@@ -446,9 +446,13 @@ body.category .logo__img--partner,
   font-size: max(11px, calc(var(--hero-text) * 0.5));
   color: var(--muted);
 }
+/* the landing reads light-on-dark over its full-screen film, like the residence heroes */
+body.home { --ink: #fff; }
+body.home .hero-content .hero-eyebrow,
 body.category .hero-content .hero-eyebrow { color: rgba(255, 255, 255, 0.78); }
 .hero-price--link { cursor: pointer; transition: color 0.4s var(--ease); }
 .hero-price--link:hover { color: var(--accent); }
+body.home .hero-price--link:hover,
 body.category .hero-price--link:hover { color: rgba(255, 255, 255, 0.72); }
 
 /* footer row */
@@ -591,6 +595,9 @@ html.has-cursor input, html.has-cursor textarea, html.has-cursor select { cursor
   right: var(--grid-pad);
   line-height: 0;
 }
+/* over the landing film: a solid white pill and a white menu square */
+body.home .site-actions { --btn-fill: var(--navy); --btn-text-hover: #fff; --btn-bg: #fff; }
+body.home .site-menu { --btn-fill: #fff; --btn-text-hover: var(--navy); }
 /* a faint light edge keeps the button's shape over sections painted in its own colour; it vanishes on paper */
 .site-menu .menu-btn { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35); }
 .selection-btn {
