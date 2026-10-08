@@ -19,7 +19,7 @@ body.contact {
   --title-max: calc(40vw * var(--s));
   --copy-max: calc(25vw * var(--s));
   --quote-max: calc(63vw * var(--s));
-  --quote-img: calc(12.7vw * var(--s));
+  --quote-img: calc(46vw * var(--s)); /* the quote photo: a wide picture, not a thumbnail */
   --quote-gap: calc(4.3vw * var(--s));
   --values-gap: calc(5vw * var(--s));
   --next-title: calc(5.8vw * var(--s));
@@ -251,8 +251,8 @@ html.js body:not(.reveals-ready) main [data-clip] { opacity: 0; pointer-events: 
 }
 .cat-quote__figure {
   margin: 0;
-  width: var(--quote-img);
-  height: var(--quote-img);
+  width: min(var(--quote-img), 100%);
+  aspect-ratio: 16 / 9; /* the renders are 1200 x 670: shown whole instead of a small square crop */
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -1121,7 +1121,7 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
     --title-max: 90vw;
     --copy-max: 84vw;
     --quote-max: 92vw;
-    --quote-img: 30vw;
+    --quote-img: 88vw;
     --quote-gap: 8vw;
     --values-gap: 16vw;
     --next-title: 12vw;
