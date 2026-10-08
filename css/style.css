@@ -151,7 +151,7 @@ html, body {
 html.preloading body { overflow: hidden; height: 100svh; }
 /* the home page is one screen: scrolling reveals the residences instead of moving the page */
 body.home { height: 100svh; overflow: hidden; }
-body.home #page-stage { height: 100svh; overflow: hidden; }
+body.home #page-stage { height: 100svh; overflow: hidden; background: var(--navy); } /* dark under the film: the loader exit grows its frame over this */
 
 /* ---------- Cross-document view transitions (shared hero image) ---------- */
 @view-transition { navigation: auto; }

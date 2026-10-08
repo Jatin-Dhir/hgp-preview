@@ -197,7 +197,7 @@
   /* =========================================================
      Hero intro
      ========================================================= */
-  function heroIntro({ withVisual = true, delay = 0, logoInPlace = false } = {}) {
+  function heroIntro({ withVisual = true, delay = 0, fromLoader = false } = {}) {
     const tl = gsap.timeline({ paused: true, delay });
     const visual = $('.hero-visual');
     const lines = $$('.hero-content [data-lines]'); // headline, then the line under it
@@ -205,8 +205,8 @@
     const marquee = $('.hero-section .marquee-reveal');
     // after the loader the page logo must not drop in: it takes over from the loader logo in the same spot
     const logos = $$('.logo'); // Homeland Global Park (left) and Homeland Park Collection (right)
-    const logo = logoInPlace ? logos : [];
-    const chrome = [...(logoInPlace ? [] : logos), $('.about-btn'), $('.site-menu')].filter(Boolean);
+    const logo = fromLoader ? logos : [];
+    const chrome = [...(fromLoader ? [] : logos), $('.about-btn'), $('.site-menu')].filter(Boolean);
     const footer = ['[data-hero-eyebrow]', '.site-footer [data-copyright]', '.scroll-hint'].map((s) => $(s)).filter(Boolean);
     const actions = $('.site-actions');
 
@@ -215,7 +215,9 @@
     // the hero photo covers the screen from the first frame: it only fades in (no zoom)
     if (withVisual && visual) {
       gsap.set(visual, { autoAlpha: 0 });
-    } else if (visual) {
+    } else if (visual && !fromLoader) {
+      // after the loader the film stays hidden until the loader frame covers the screen (the hand-off shows it),
+      // or the same picture would sit full-size behind the growing frame
       gsap.set(visual, { visibility: 'visible' });
     }
     if (marquee) gsap.set(marquee, { yPercent: 28, autoAlpha: 0 });
@@ -391,12 +393,14 @@
     // page chrome starts while the image is still travelling
     exit.call(() => {
       document.documentElement.classList.remove('preloading');
-      heroIntro({ withVisual: false, logoInPlace: true });
+      heroIntro({ withVisual: false, fromLoader: true });
     }, null, 0.55);
 
     exit.call(() => {
       // hand-off: real hero image takes over at the same rect
       gsap.set($('.hero-visual'), { clipPath: 'none', visibility: 'visible' });
+      // the frame was shown without the hero's darkening: ease it in rather than dimming the picture in one step
+      gsap.fromTo($('.hero-visual__shade'), { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power1.out' });
       gsap.set(heroImg, { scale: 1 });
       if (heroImg && heroImg.tagName === 'VIDEO') heroImg.play().catch(() => {});
       document.body.classList.add('preloader-done');
