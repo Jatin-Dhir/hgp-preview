@@ -257,7 +257,7 @@ html.js body:not(.reveals-ready) main [data-clip] { opacity: 0; pointer-events: 
   overflow: hidden;
 }
 .cat-quote__figure img { width: 100%; height: 100%; object-fit: cover; }
-.cat-quote__text { max-width: none; line-height: 1.02; }
+.cat-quote__text { max-width: none; font-size: calc(var(--h2) * 0.62); line-height: 1.04; }
 .cat-quote__attrib,
 .cat-pull-quote__attrib {
   display: flex;
@@ -1020,7 +1020,7 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
 /* quote band */
 .xp-quote { padding: var(--sec-pad) var(--grid-pad); background: var(--xp-accent); color: #fff; }
 .xp-quote__inner { display: flex; flex-direction: column; align-items: center; gap: calc(3vw * var(--s)); max-width: calc(64vw * var(--s)); margin-inline: auto; text-align: center; }
-.xp-quote__text { font-size: var(--h2); line-height: 1.02; letter-spacing: -0.02em; text-wrap: balance; }
+.xp-quote__text { font-size: calc(var(--h2) * 0.62); line-height: 1.04; letter-spacing: -0.02em; text-wrap: balance; }
 .xp-quote .cat-quote__name { color: #fff; }
 .xp-quote .cat-quote__source { color: rgba(255, 255, 255, 0.7); }
 
@@ -1078,7 +1078,7 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   .xp-mosaic__item--1 { grid-column: 1 / -1; grid-row: span 2; }
   .xp-mosaic__item--2, .xp-mosaic__item--3, .xp-mosaic__item--4, .xp-mosaic__item--5 { grid-column: auto; grid-row: span 1; }
   .xp-mosaic__item--6 { grid-column: 1 / -1; grid-row: span 2; }
-  .xp-quote__text { font-size: 9vw; }
+  .xp-quote__text { font-size: 6.6vw; }
   .xp-facts__grid { grid-template-columns: 1fr; gap: 8vw; }
   .xp-partners .logo-lockup, .xp-partners__body { grid-column: 1 / -1; }
   .xp-partners__statement { font-size: 8vw; }
@@ -1127,7 +1127,8 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
     --next-title: 12vw;
     --next-label: 3vw;
   }
-  .cat-intro h2, .cat-cta h2, .cat-quote__text { font-size: 10vw; }
+  .cat-intro h2, .cat-cta h2 { font-size: 10vw; }
+  .cat-quote__text { font-size: 6.6vw; }
   .slider { margin-top: 10vw; padding-bottom: 22vw; }
   .slider__viewport { rotate: -6deg; }
   .slider__item { rotate: 6deg; }

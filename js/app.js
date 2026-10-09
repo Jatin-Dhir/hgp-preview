@@ -351,13 +351,12 @@
     gsap.to(wrapper, { yPercent: 0, duration: 0.85, ease: 'power4.out', delay: 0.1 });
 
     await wait(0.25);
-    for (let i = 0; i < frames.length; i++) {
-      await loadImage(imgs[i]);
-      revealFrame(i);
-      tick(steps[i] ?? 99);
-      await wait(i === frames.length - 1 ? 0.4 : 0.32);
+    // the counter keeps its steps; the picture (one, or a few) pops in on the first of them
+    for (let i = 0; i < steps.length; i++) {
+      if (frames[i]) { await loadImage(imgs[i]); revealFrame(i); }
+      tick(steps[i]);
+      await wait(i === steps.length - 1 ? 0.4 : 0.32);
     }
-    tick(99);
     bufferHeroVideo(); // the frames are in: the film can have the bandwidth now
     // a hero photo must be decoded before the hand-off; the film does not (its poster is the frame already on screen)
     await Promise.all([heroImg && heroImg.tagName !== 'VIDEO' ? loadImage(heroImg, 4) : null, fontsReady]);

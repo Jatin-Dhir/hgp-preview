@@ -57,6 +57,7 @@
   --visual-w: min(calc(46vw * var(--s)), calc(38svh * var(--visual-ar)));
   --hero-content-w: calc(50vw * var(--s));
   --hero-text: min(var(--h5), 3.2svh);
+  --hero-statement: min(calc(3.4vw * var(--s)), 6.4svh);
 
   /* actions */
   --action-h: calc(3.36vw * var(--s));
@@ -105,6 +106,7 @@
     --visual-w: min(74vw, 38svh);
     --hero-content-w: 88vw;
     --hero-text: 5vw;
+    --hero-statement: 8.4vw;
     --h1: 22vw;
     --action-h: 12vw;
     --menu-w: 13vw;
@@ -445,6 +447,13 @@ body.category .logo__img--partner,
   margin-bottom: 1.4em;
   font-size: max(11px, calc(var(--hero-text) * 0.5));
   color: var(--muted);
+}
+/* the landing's headline: Punjab's First Branded Serviced Residences */
+.hero-content .hero-statement {
+  margin-bottom: 0.32em;
+  font-size: var(--hero-statement);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
 }
 /* the landing reads light-on-dark over its full-screen film, like the residence heroes */
 body.home { --ink: #fff; }
