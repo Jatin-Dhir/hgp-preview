@@ -152,7 +152,8 @@ html.js body:not(.reveals-ready) main [data-clip] { opacity: 0; pointer-events: 
   position: relative;
   width: 100%;
   margin-top: calc(5vw * var(--s));
-  padding-bottom: calc(9vw * var(--s));
+  /* room under the tilted track: its low left end and the arrows below it never meet */
+  padding-bottom: calc(12vw * var(--s));
   overflow-x: clip;
 }
 .slider__viewport {
@@ -833,7 +834,7 @@ html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .site-menu, .marquee-
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
   gap: var(--grid-gap);
   /* bottom padding keeps the contact block clear of the fixed buttons */
@@ -844,8 +845,10 @@ html.js body.contact:not(.is-ready) :is(.logo, .about-btn, .site-menu, .marquee-
   font-size: calc(var(--small) * 0.85);
 }
 body.category .site-foot { color: var(--cat); }
+.site-foot__brand { display: flex; align-items: center; gap: calc(1.6vw * var(--s)); }
+.site-foot__logo { height: calc(3.4vw * var(--s)); width: auto; }
 .site-foot__meta, .site-foot__contact { display: flex; flex-direction: column; gap: 0.6em; }
-.site-foot__meta { align-items: flex-start; text-align: left; }
+.site-foot__meta { align-items: center; text-align: center; }
 .site-foot__contact { align-items: flex-end; text-align: right; }
 .site-foot__links { display: flex; gap: 1.5em; }
 .site-foot [data-copyright] { color: var(--cat-muted, var(--muted)); }
@@ -1106,6 +1109,8 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   .cat-pull-quote__text { font-size: calc(var(--h3) * 0.72); }
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: calc(4vw * var(--s)); }
   .tile:nth-child(even) { margin-top: 0; }
+  .site-foot { grid-template-columns: 1fr 1fr; }
+  .site-foot__contact { grid-column: 1 / -1; align-items: flex-start; text-align: left; }
   .logo-lockup img { height: calc(3.4vw * var(--s)); }
 }
 
@@ -1151,6 +1156,7 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   .hero-price { font-size: max(11.5px, 3vw); letter-spacing: 0.12em; padding-inline: 0.9em; white-space: nowrap; }
   .site-foot { grid-template-columns: 1fr; gap: 6vw; padding: 10vw 6vw; }
   .site-foot__meta, .site-foot__contact { align-items: flex-start; text-align: left; }
+  .site-foot__logo { height: 9vw; }
   .slider__caption { flex-direction: column; gap: 0.3em; }
   .slider__specs { text-align: left; }
   .site-foot { flex-direction: column; align-items: flex-start; gap: 4vw; padding: 8vw 6vw; }
@@ -1212,7 +1218,8 @@ body.legal .site-actions { display: none; }
 /* ---------- Touch: give small inline controls a finger-sized hit area without moving them ---------- */
 @media (pointer: coarse) {
   .link-underline::before { content: ""; position: absolute; inset: -15px -9px; }
-  .slider__arrow { width: max(44px, 11vw); height: max(44px, 11vw); }
+  /* touch: never under 44px, but no bigger than usual (11vw made them ~150px on touch-screen laptops) */
+  .slider__arrow { width: max(44px, calc(3.47vw * var(--s))); height: max(44px, calc(3.47vw * var(--s))); }
   .logo, .nav-menu__links a, .nav-menu__burger,
   .lightbox__close, .lightbox__nav { min-height: 44px; min-width: 44px; }
   .nav-menu__links a { display: flex; align-items: center; }
