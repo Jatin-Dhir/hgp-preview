@@ -179,6 +179,41 @@
 
   /* ---------- pinned strip: vertical scroll moves the row sideways ---------- */
   /* ---------- tilted slider: driven by the page scroll, drag and arrows add an offset ---------- */
+  /** Horizontal drag on a slider. The pointer is captured only once it has travelled a few pixels, so a plain
+      click still reaches the photo under it (and opens the lightbox); the click that ends a real drag is swallowed. */
+  function onDrag(viewport, { start, move, end = () => {} }) {
+    let down = false;
+    let dragging = false;
+    let swallow = false;
+    let startX = 0;
+    viewport.addEventListener('dragstart', (e) => e.preventDefault()); // links and images are natively draggable
+    viewport.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      down = true; dragging = false; swallow = false; startX = e.clientX;
+    });
+    viewport.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      if (!dragging) {
+        if (Math.abs(e.clientX - startX) < 6) return;
+        dragging = true;
+        start();
+        try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
+        viewport.classList.add('is-dragging');
+      }
+      move(e.clientX - startX);
+    });
+    const stop = () => {
+      if (dragging) { swallow = true; end(); }
+      down = false; dragging = false;
+      viewport.classList.remove('is-dragging');
+    };
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => viewport.addEventListener(t, stop));
+    viewport.addEventListener('click', (e) => {
+      if (!swallow) return;
+      swallow = false; e.preventDefault(); e.stopPropagation();
+    }, true);
+  }
+
   function initSlider(root) {
     const viewport = $('.slider__viewport', root);
     const track = $('.slider__track', root);
@@ -215,17 +250,12 @@
     if (reduce || max <= 0) {
       // no pinning (reduced motion, or everything already fits): drag and arrows move the strip directly
       let offset = 0;
-      let dragging = false;
-      let startX = 0;
       let startOffset = 0;
-      viewport.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
-        dragging = true; startX = e.clientX; startOffset = offset;
-        try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
+      onDrag(viewport, {
+        start: () => { startOffset = offset; },
+        move: (dx) => { offset = clamp(startOffset + dx); show(offset); },
+        end: () => { offset = target; },
       });
-      viewport.addEventListener('pointermove', (e) => { if (dragging) { offset = clamp(startOffset + (e.clientX - startX)); show(offset); } });
-      const end = () => { dragging = false; offset = target; };
-      ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => viewport.addEventListener(t, end));
       const by = (dir) => { offset = clamp(target - dir * step()); show(offset); };
       if (prev) prev.addEventListener('click', () => by(-1));
       if (next) next.addEventListener('click', () => by(1));
@@ -254,20 +284,11 @@
       if (window.lenis) window.lenis.scrollTo(to, immediate ? { immediate: true, force: true } : { duration: 0.8 });
       else window.scrollTo({ top: to, behavior: immediate ? 'auto' : 'smooth' });
     };
-    let dragging = false;
-    let startX = 0;
     let startY = 0;
-    viewport.addEventListener('pointerdown', (e) => {
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-      dragging = true; startX = e.clientX; startY = window.scrollY;
-      try { viewport.setPointerCapture(e.pointerId); } catch (err) { /* pointer already released */ }
-      viewport.classList.add('is-dragging');
+    onDrag(viewport, {
+      start: () => { startY = window.scrollY; },
+      move: (dx) => goTo(startY - dx * (travel() / max) * 1.2, true),
     });
-    viewport.addEventListener('pointermove', (e) => {
-      if (dragging) goTo(startY + (startX - e.clientX) * (travel() / max) * 1.2, true);
-    });
-    const end = () => { dragging = false; viewport.classList.remove('is-dragging'); };
-    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => viewport.addEventListener(t, end));
     const by = (dir) => goTo(scrollFor(target - dir * step()));
     if (prev) prev.addEventListener('click', () => by(-1));
     if (next) next.addEventListener('click', () => by(1));

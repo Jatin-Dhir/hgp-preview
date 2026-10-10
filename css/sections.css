@@ -359,15 +359,24 @@ html.js body:not(.reveals-ready) main [data-clip] { opacity: 0; pointer-events: 
   padding-inline: var(--grid-pad);
 }
 .cat-gallery__foot .cat-cta__link { margin-top: 0; }
-/* residence pages: the three links stack as one column, same size, left edges aligned */
+/* residence pages: the three links form one list under the slider arrows, sharing their left edge; every row is
+   the same width with its icon at the right, so the rules line up */
 body.category .cat-gallery__foot {
   flex-direction: column;
-  align-items: flex-start;
-  width: fit-content;
-  margin-inline: auto;
-  gap: 0.8em;
+  align-items: stretch;
+  width: max-content;
+  min-width: calc(24vw * var(--s));
+  margin-inline: calc(12.5vw * var(--s)) 0;
+  padding-inline: 0;
+  gap: 1.1em;
 }
-body.category .cat-gallery__foot > * { font-size: calc(var(--h5) * 0.82); }
+body.category .cat-gallery__foot > * {
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+  font-size: calc(var(--h5) * 0.82);
+}
+body.category .cat-gallery__foot svg { width: 0.8em; height: 0.8em; }
 button.cat-cta__link { padding: 0; border: 0; background: none; color: inherit; cursor: pointer; font: inherit; }
 .tiles {
   display: grid;
@@ -1154,12 +1163,27 @@ body.experience .site-actions, body.experience .site-menu { --btn-fill: var(--xp
   .logo-lockup img { height: 10vw; }
   .logo-lockup__divider { height: 9vw; }
   .hero-price { font-size: max(11.5px, 3vw); letter-spacing: 0.12em; padding-inline: 0.9em; white-space: nowrap; }
-  .site-foot { grid-template-columns: 1fr; gap: 6vw; padding: 10vw 6vw; }
-  .site-foot__meta, .site-foot__contact { align-items: flex-start; text-align: left; }
-  .site-foot__logo { height: 9vw; }
+  /* one centred column: logos, contact, then the legal line; the bottom clears the fixed Our Residences bar */
+  .site-foot {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 8vw;
+    padding: 12vw 6vw calc(var(--action-h) + 30vw); /* the bar floats 18vw up on phones */
+    font-size: 3.5vw;
+    text-align: center;
+  }
+  .site-foot__brand { justify-content: center; gap: 5vw; }
+  .site-foot__logo { height: 15vw; }
+  .site-foot__meta, .site-foot__contact { align-items: center; text-align: center; gap: 2.4vw; }
+  .site-foot__contact { grid-column: auto; order: 2; }
+  .site-foot__meta { order: 3; }
+  .site-foot__links { justify-content: center; gap: 6vw; }
+  .site-foot a { padding-block: 1.5vw; }
+  /* the gallery list spans the content width; the arrows sit at the right */
+  body.category .cat-gallery__foot { width: auto; min-width: 0; margin-inline: var(--grid-pad); font-size: 4.4vw; }
+  body.category .cat-gallery__foot > * { font-size: 4.4vw; }
   .slider__caption { flex-direction: column; gap: 0.3em; }
   .slider__specs { text-align: left; }
-  .site-foot { flex-direction: column; align-items: flex-start; gap: 4vw; padding: 8vw 6vw; }
 }
 
 /* ---------- Legal pages ---------- */

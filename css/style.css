@@ -74,11 +74,11 @@
   --page-scale: 0.38;
 
   /* nav menu */
-  --menu-panel-w: calc(26vw * var(--s));
-  --menu-panel-pad: calc(3vw * var(--s));
-  --menu-link: calc(2.3vw * var(--s)); /* Albert Sans runs wider than the old serif */
-  --menu-contact: calc(1vw * var(--s));
-  --menu-panel-min-h: calc(26.4vw * var(--s));
+  --menu-panel-w: calc(24vw * var(--s));
+  --menu-panel-pad: calc(2.6vw * var(--s));
+  --menu-link: calc(1.35vw * var(--s));
+  --menu-contact: calc(0.9vw * var(--s));
+  --menu-panel-min-h: calc(20vw * var(--s));
 
   --underline-offset: -0.3em;
 }
@@ -119,9 +119,9 @@
     --page-scale: 0.42;
     --menu-panel-w: calc(100vw - 12vw);
     --menu-panel-pad: 7vw;
-    --menu-link: 9vw;
-    --menu-contact: 3.4vw;
-    --menu-panel-min-h: 60vw;
+    --menu-link: 5.5vw;
+    --menu-contact: 3.2vw;
+    --menu-panel-min-h: 48vw;
   }
 }
 
@@ -276,11 +276,11 @@ img { display: block; max-width: 100%; }
 .logo {
   grid-column: 1 / -1;
   grid-row: 1;
-  justify-self: center;
+  justify-self: start;
   align-self: center;
   line-height: 0;
 }
-/* Homeland Global Park and Homeland Park Collection side by side in the centre, split by a hairline */
+/* Homeland Global Park and Homeland Park Collection side by side on the left, split by a hairline */
 .logo a { display: inline-flex; align-items: center; gap: var(--logo-gap); line-height: 0; }
 .logo__img {
   height: var(--logo-h);
@@ -304,12 +304,7 @@ body.category .logo__img--partner,
 .site-preloader__logo--partner { filter: brightness(0) invert(1); }
 
 .about-btn {
-  grid-row: 1;
-  grid-column: 1 / 4;
-  justify-self: start;
-  align-self: center;
-  font-size: calc(var(--small) * 1.1);
-  white-space: nowrap;
+  display: none;
 }
 
 /* hero row */
@@ -459,6 +454,22 @@ body.category .logo__img--partner,
 body.home { --ink: #fff; }
 body.home .hero-content .hero-eyebrow,
 body.category .hero-content .hero-eyebrow { color: rgba(255, 255, 255, 0.78); }
+/* residence heroes: the eyebrow names the residence (the h1 is for screen readers), so it leads; the sentence
+   under it sits at reading size on a capped measure, so it breaks into two even lines */
+body.category .hero-content .hero-eyebrow {
+  margin-bottom: 0.95em;
+  font-size: max(13px, calc(var(--hero-text) * 0.74));
+  letter-spacing: 0.16em;
+  color: #fff;
+  text-wrap: balance;
+}
+body.category .hero-content .hero-lead {
+  max-width: 30em;
+  margin-inline: auto;
+  font-size: calc(var(--hero-text) * 0.8);
+  line-height: 1.45;
+  letter-spacing: 0;
+}
 .hero-price--link { cursor: pointer; transition: color 0.4s var(--ease); }
 .hero-price--link:hover { color: var(--accent); }
 body.home .hero-price--link:hover,
@@ -693,8 +704,7 @@ body.preloader-done .site-preloader { display: none; }
 .site-preloader__logo {
   position: absolute;
   top: calc(var(--grid-pad) * 0.6);
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--grid-pad);
   height: var(--logo-h);
   width: auto;
   z-index: 4;
@@ -869,8 +879,9 @@ body.selection-open .site-actions { pointer-events: none; }
   grid-template-columns: repeat(var(--card-count, 4), minmax(0, 1fr));
   gap: var(--grid-gap);
   width: 100%;
-  height: 75svh;
+  height: 65svh;
   padding: var(--grid-pad);
+  padding-bottom: 0;
   padding-top: 0;
   position: relative;
   z-index: 4;
@@ -1008,15 +1019,15 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.08em;
+  gap: 0.22em;
   margin: 0;
   padding: 0;
 }
 .nav-menu__links a {
   font-family: var(--font-sans);
-  font-weight: 500;
+  font-weight: 400;
   font-size: var(--menu-link);
-  line-height: 1.08;
+  line-height: 1.15;
   white-space: nowrap; /* each link is one rolling line: a wrap would be clipped */
   letter-spacing: -0.01em;
   color: var(--menu-text);
@@ -1024,7 +1035,7 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
 .nav-menu__links a.rolling-text {
   display: inline-block;
   overflow: hidden;
-  height: 1.08em;
+  height: 1.15em;
   vertical-align: bottom;
 }
 .rolling-text__block { display: block; transition: transform 0.7s var(--ease); }
@@ -1085,14 +1096,16 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
 
 /* ---------- Responsive: phone portrait ---------- */
 @media (max-width: 650px) and (orientation: portrait) {
-  /* the left link stays visible on phones: the burger menu alone made navigation clumsy */
-  .about-btn { font-size: 3.6vw; align-self: center; }
+  .about-btn { display: none; }
   .logo { margin-top: 2vw; }
   /* the bottom of the hero row is kept clear for the fixed Our Residences / Enquire bar */
   .hero-section { gap: 5svh; padding-bottom: 14vw; }
   .marquee { padding-bottom: 5vw; }
   .hero-content h1,
   .hero-content p:not(.hero-price) { font-size: var(--hero-text); }
+  body.category .hero-content .hero-lead { font-size: max(16px, 4.1vw); }
+  body.category .hero-eyebrow__name { display: block; margin-bottom: 0.35em; }
+  body.category .hero-eyebrow__sep { display: none; }
   .hero-price { margin-top: 1.4em; }
   .site-footer > [data-copyright],
   .scroll-hint { grid-column: 1 / -1; justify-self: center; }
@@ -1125,7 +1138,7 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
   .selection-card__symbol { width: 4vw; }
   .selection-card__desc { grid-column: 1 / -1; max-width: 46vw; }
   .selection-card__cover { flex: 0 0 38%; height: 100%; }
-  .selection-cards { height: 76svh; }
+  .selection-cards { height: 65svh; }
   /* the menu becomes a full-width sheet that drops from the top, where its button is; the close button lands on it */
   .nav-menu__panel {
     left: 0; right: 0; top: 0; bottom: auto;
@@ -1135,11 +1148,17 @@ body.nav-menu-open .nav-menu__overlay { pointer-events: auto; }
     padding: calc(var(--menu-top) + var(--action-h) + 6vw) 7vw 9vw;
     overflow: auto;
   }
-  .nav-menu__links { gap: 0.1em; }
-  .nav-menu__links a { font-size: 9.4vw; line-height: 1.15; }
+  .nav-menu__links { gap: 0.25em; }
+  .nav-menu__links a { font-size: 5.5vw; line-height: 1.25; }
   .nav-menu__burger { position: absolute; top: var(--menu-top); right: var(--grid-pad); bottom: auto; left: auto; width: var(--menu-w); height: var(--action-h); }
   .nav-menu__contact { flex-wrap: wrap; justify-content: flex-start; gap: 0.6em 2em; margin-top: 8vw; }
   .nav-menu__contact a { font-size: 3.9vw; min-height: 44px; }
+  .home-page-footer {
+    font-size: max(11.5px, 3.2vw);
+    gap: 4.5vw;
+    padding: 3vw var(--grid-pad) 4.5vw;
+    margin-top: 0;
+  }
 }
 
 /* ---------- Lightbox ---------- */
@@ -1215,3 +1234,25 @@ body.lightbox-open { overflow: hidden; }
   font-size: var(--menu-contact);
   color: var(--menu-muted);
 }
+
+.home-page-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5em;
+  margin: 0;
+  padding: calc(1.4vw * var(--s)) var(--grid-pad);
+  font-family: var(--font-sans);
+  font-size: calc(var(--small) * 0.85);
+  color: var(--navy);
+  position: relative;
+  z-index: 2;
+}
+.home-page-footer a {
+  color: inherit;
+  transition: opacity 0.3s var(--ease);
+}
+.home-page-footer a:hover {
+  opacity: 0.7;
+}
+

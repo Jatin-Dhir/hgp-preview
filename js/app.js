@@ -101,7 +101,7 @@
   function splitLines(el) {
     if (!el) return [];
     if (el.dataset.split === '1') return $$('.split-line > span', el);
-    const text = el.textContent.trim().replace(/\s+/g, ' ');
+    const text = el.textContent.trim().replace(/[ \t\n\r\f]+/g, ' '); // non-breaking spaces stay: they bind phrases
     el.setAttribute('aria-label', text);
     const words = text.split(' ');
     el.textContent = '';
@@ -233,7 +233,8 @@
     if (marquee) tl.to(marquee, { yPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 0.35);
     if (logo.length) tl.to(logo, { autoAlpha: 1, duration: 0.35, ease: 'power1.inOut' }, 0);
     tl.to(chrome, { y: 0, autoAlpha: 1, duration: 0.9, stagger: 0.08, ease: 'power3.out' }, 0.45);
-    lines.forEach((el, i) => tl.add(revealLines(el), 0.6 + i * 0.12));
+    // the lines are split only for the reveal: then the plain text goes back, so it re-wraps (balanced) at any width
+    lines.forEach((el, i) => tl.add(revealLines(el).eventCallback('onComplete', () => unsplit(el)), 0.6 + i * 0.12));
     if (price) {
       tl.to(price, { autoAlpha: 1, duration: 0.35, ease: 'power1.out' }, 1.0)
         .to(price, { '--bt': 1, duration: 0.35, ease: 'power1.inOut' }, 1.05)
